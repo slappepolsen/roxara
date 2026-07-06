@@ -1,0 +1,3724 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DNA — major arcs for Roxane / Sara</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Palette: cream ground + blob accents (warm retro) */
+    --bg: #f9f4e8;
+    --bg-soft: #fffdf8;
+    --ink: #2c2824;
+    --ink-soft: #5a524c;
+    --ink-mute: #887e74;
+    --rule: #e3d9c8;
+    --line: #3d6d7a;
+    --substop: #8fb4c4;
+    --roxane: #e8685a;
+    --sara: #d95e9a;
+    --both: #2c7a8b;
+    --topbar-bg: #265f6d;
+    --topbar-muted: #c1e1ec;
+    --spine-x: 96px;
+    --spine-w: 6px;
+    --sans: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --legend-panel-right: 28px;
+  }
+  * { box-sizing: border-box; }
+  html {
+    background: var(--bg);
+    scrollbar-gutter: stable;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--topbar-bg);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 0 2px 0 rgba(44, 122, 139, 0.25);
+  }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: -0.01em; }
+  .brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--bg-soft);
+    color: var(--ink);
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 17px;
+  }
+  .brand-strap { color: var(--topbar-muted); font-weight: 400; font-size: 13px; opacity: 0.92; }
+  .topbar-spacer { flex: 1; }
+  .lang-picker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--topbar-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    opacity: 0.95;
+  }
+  .topbar-credit {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--topbar-muted);
+    opacity: 0.95;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .topbar-credit a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(193, 225, 236, 0.35);
+  }
+  .topbar-credit a:hover {
+    color: #fff;
+    border-bottom-color: rgba(255, 255, 255, 0.55);
+  }
+  .lang-picker select {
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 4px 24px 4px 8px;
+    border: 1px solid rgba(193, 225, 236, 0.35);
+    border-radius: 4px;
+    background: #1f4e59 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path fill='%23ffffff' d='M2 4l3 3 3-3z'/></svg>") no-repeat right 6px center;
+    color: #fff;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 28px 24px 80px; padding-right: 340px; }
+  @media (max-width: 980px) {
+    .container { padding-right: 24px; }
+  }
+
+  .panel-title {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    font-weight: 700;
+    margin: 0 0 12px;
+  }
+
+  .map {
+    position: relative;
+    margin-top: 4px;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    align-items: start;
+    min-height: 0;
+  }
+  /* The continuous vertical line behind the markers — always charcoal */
+  .row::before {
+    content: "";
+    position: absolute;
+    left: var(--spine-x);
+    top: 0;
+    bottom: 0;
+    width: var(--spine-w);
+    background: var(--line);
+    transform: translateX(-50%);
+    z-index: 0;
+  }
+  .row.row-first::before { top: 50%; }
+  .row.row-last::before { bottom: 50%; }
+  /* Marker centered on spine (right edge of column = spine axis) */
+  .row .marker-cell {
+    position: relative;
+    z-index: 1;
+    align-self: start;
+    padding: 0;
+    min-height: 1px;
+  }
+
+  /* Substop tick — horizontal bar, centered on spine */
+  .station-marker {
+    position: absolute;
+    right: 0;
+    z-index: 2;
+    transform: translateX(50%);
+    width: 22px;
+    height: 5px;
+    background: var(--substop);
+    border-radius: 2px;
+    top: 18px;
+  }
+  /* Major station — disc centered on spine, aligned with title row */
+  .station-marker.is-major {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--role, var(--line));
+    border: 3px solid var(--bg-soft);
+    box-shadow: 0 0 0 2px var(--role, var(--line));
+    top: 12px;
+  }
+
+  .station-info {
+    padding: 12px 24px 12px 36px;
+    display: flex;
+    align-items: baseline;
+    column-gap: 10px;
+    row-gap: 2px;
+    flex-wrap: wrap;
+  }
+  .station-id {
+    font-weight: 700;
+    font-size: 11px;
+    color: #fff;
+    background: var(--bc, var(--ink-mute));
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    flex-shrink: 0;
+  }
+  .station-name { font-weight: 600; font-size: 15px; color: var(--ink); }
+  .station-meta {
+    font-size: 11px;
+    color: var(--ink-mute);
+    margin: 0;
+    letter-spacing: 0.02em;
+    line-height: 1.35;
+  }
+  .station-foot {
+    flex-basis: 100%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-top: 0;
+    padding-top: 0;
+  }
+  .readmore-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 100%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    cursor: pointer;
+    line-height: 1.2;
+    flex-shrink: 0;
+  }
+  .readmore-chip::after {
+    content: "›";
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0.55;
+    transform: translateY(-0.5px);
+  }
+  .readmore-chip:hover {
+    border-color: var(--both);
+    color: var(--both);
+    background: linear-gradient(180deg, #fff 0%, rgba(44, 122, 139, 0.07) 100%);
+  }
+  .readmore-chip:focus-visible {
+    outline: 2px solid var(--both);
+    outline-offset: 2px;
+  }
+  .station-meta--block {
+    flex-basis: 100%;
+    width: 100%;
+    margin-top: 0;
+  }
+  .arc-event-note {
+    flex-basis: 100%;
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 11px;
+    border-radius: 8px;
+    background: rgba(232, 222, 206, 0.45);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  .arc-event-note-emoji {
+    margin-right: 0.35em;
+    font-style: normal;
+    font-weight: 600;
+    white-space: normal;
+  }
+  .arc-event-note-ep {
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--ink-mute);
+  }
+  /* Substop rows — quieter typography & outlined chip */
+  .row.is-substop .station-info { padding-top: 10px; padding-bottom: 10px; }
+  .row.is-substop .station-name { font-weight: 500; font-size: 13.5px; color: var(--ink-soft); }
+  .row.is-substop .station-id {
+    background: transparent;
+    color: var(--ink-mute);
+    border: 1px solid var(--rule);
+    padding: 2px 7px;
+    font-size: 10px;
+  }
+  .row.is-substop .station-meta { color: var(--ink-mute); opacity: 0.85; }
+  .role-badge {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 7px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #fff;
+    background: var(--role);
+  }
+
+  /* Season banner — full-width colour strip + badge (reference: transit header cards) */
+  .season-banner {
+    position: relative;
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    align-items: center;
+    gap: 0;
+    padding: 16px 18px 16px 0;
+    margin-top: 10px;
+    background: var(--bc, var(--ink-mute));
+    border-radius: 10px 10px 0 0;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  }
+  .season-banner:first-child {
+    margin-top: 0;
+    border-radius: 7px 7px 0 0;
+  }
+  .season-banner .marker-cell {
+    position: relative;
+    align-self: stretch;
+    min-height: 52px;
+  }
+  /* Badge vertically aligned with season title (not the eyebrow / STATION line) */
+  .season-banner .banner-badge {
+    top: calc(50% + 0px);
+    transform: translate(50%, -50%);
+  }
+  .banner-badge {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    z-index: 2;
+    transform: translate(50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    background: linear-gradient(165deg, #fffdf8 0%, #fef6e4 55%, #f8ebd4 100%);
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 8px rgba(42, 36, 36, 0.18);
+  }
+  .banner-badge-inner {
+    position: relative;
+    z-index: 1;
+    font-weight: 800;
+    font-size: 15px;
+    line-height: 1;
+    color: #2c2824;
+    letter-spacing: -0.03em;
+  }
+  .banner-info {
+    padding: 0 22px 0 28px;
+  }
+  .banner-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.82);
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(42, 36, 36, 0.18);
+  }
+  .banner-title {
+    margin-top: 4px;
+    font-size: 23px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    text-shadow: 0 2px 4px rgba(42, 36, 36, 0.22);
+  }
+  .banner-meta {
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.92);
+    letter-spacing: 0.03em;
+    text-shadow: 0 1px 2px rgba(42, 36, 36, 0.18);
+  }
+
+  /* Interchange (milestone) row */
+  .interchange {
+    position: relative;
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    align-items: start;
+    min-height: 0;
+    background: rgba(44, 122, 139, 0.055);
+  }
+  .interchange::before {
+    content: "";
+    position: absolute;
+    left: var(--spine-x);
+    top: 0;
+    bottom: 0;
+    width: var(--spine-w);
+    background: var(--line);
+    transform: translateX(-50%);
+    z-index: 0;
+  }
+  .interchange .marker-cell {
+    position: relative;
+    align-self: start;
+    padding: 0;
+    min-height: 1px;
+  }
+  .interchange-marker {
+    position: absolute;
+    right: 0;
+    z-index: 2;
+    transform: translateX(50%);
+    top: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: var(--mc, var(--ink));
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow:
+      0 4px 14px rgba(42, 36, 36, 0.14),
+      0 2px 5px rgba(42, 36, 36, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  }
+  .interchange-info {
+    padding: 14px 24px 14px 36px;
+  }
+  .interchange-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--mc, var(--ink-mute));
+    font-weight: 800;
+  }
+  .interchange-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 2px;
+  }
+  .interchange-meta {
+    font-size: 11px;
+    color: var(--ink-mute);
+    margin-top: 2px;
+  }
+
+  .legend-panel {
+    position: fixed;
+    top: 80px;
+    right: var(--legend-panel-right);
+    width: 296px;
+    max-height: calc(100vh - 100px);
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    box-shadow: 0 10px 28px rgba(42, 36, 36, 0.07);
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .legend-panel.is-collapsed {
+    transform: translateX(calc(100% + var(--legend-panel-right)));
+  }
+  .legend-toggle {
+    position: absolute;
+    left: -44px;
+    top: 20px;
+    width: 44px;
+    height: 72px;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+    cursor: pointer;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: -4px 0 14px rgba(42, 36, 36, 0.06);
+    padding: 0;
+    line-height: 1;
+  }
+  .legend-toggle:hover { background: #f2ead9; }
+  .legend-chevron {
+    display: inline-block;
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+  .legend-panel.is-collapsed .legend-chevron { transform: rotate(180deg); }
+  .legend-head {
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .legend-head h3 {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink);
+    font-weight: 800;
+  }
+  .legend-body {
+    padding: 14px 18px 18px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .legend-section { margin-bottom: 18px; }
+  .legend-section:last-child { margin-bottom: 0; }
+  .legend-section-title {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .legend-list { display: flex; flex-direction: column; gap: 8px; }
+  .legend-item {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .legend-marker-cell { display: flex; align-items: center; justify-content: center; }
+  .legend-tick { display: inline-block; width: 22px; height: 5px; border-radius: 2px; background: var(--substop); }
+  .legend-disc { display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: currentColor; border: 2px solid var(--bg-soft); box-shadow: 0 0 0 2px currentColor; }
+  .legend-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: var(--mi, var(--ink-mute));
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow:
+      0 2px 8px rgba(42, 36, 36, 0.1),
+      0 1px 3px rgba(42, 36, 36, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+  }
+  .legend-line-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: currentColor;
+    font-weight: 800;
+    font-size: 11px;
+  }
+  .legend-line-badge span { color: #fff; }
+  .legend-meta { display: block; font-size: 10px; color: var(--ink-mute); margin-top: 1px; letter-spacing: 0.04em; }
+  @media (max-width: 980px) {
+    :root { --legend-panel-right: 18px; }
+    .legend-panel {
+      top: auto;
+      bottom: 16px;
+      right: var(--legend-panel-right);
+      width: 260px;
+      max-height: 60vh;
+    }
+    .legend-toggle { top: 16px; }
+  }
+
+  /* Arc synopsis overlay */
+  .synopsis-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  }
+  .synopsis-modal[hidden] { display: none; }
+  .synopsis-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(44, 40, 36, 0.42);
+    cursor: pointer;
+  }
+  .synopsis-sheet {
+    position: relative;
+    width: 100%;
+    max-width: 580px;
+    max-height: min(82vh, 680px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(42, 36, 36, 0.18);
+  }
+  .synopsis-sheet-head {
+    flex-shrink: 0;
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .synopsis-sheet-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.25;
+    padding-right: 8px;
+  }
+  .synopsis-close {
+    flex-shrink: 0;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .synopsis-close:hover { background: #f2ead9; color: var(--ink); }
+  .synopsis-sheet-body {
+    padding: 16px 18px 20px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .synopsis-blurb {
+    white-space: pre-wrap;
+    margin: 0;
+  }
+  .synopsis-blurb:empty { display: none; }
+  .synopsis-blurb:empty + .synopsis-extra .appear-section {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+  .synopsis-extra:empty { display: none; }
+  /* Episode appearance matrix (per arc, optional) */
+  .appear-section {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--rule);
+  }
+  .appear-section-title {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--ink-mute);
+    margin: 0 0 10px;
+  }
+  .appear-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    margin: 0 -2px;
+  }
+  .appear-grid {
+    display: grid;
+    gap: 6px 5px;
+    align-items: center;
+    min-width: min-content;
+    grid-template-columns: 58px repeat(var(--appear-cols, 20), minmax(17px, 22px));
+  }
+  .appear-corner {
+    min-height: 18px;
+  }
+  .appear-ep-head {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--ink-mute);
+    text-align: center;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+  }
+  .appear-row-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .appear-row-label--sara { color: var(--sara); }
+  .appear-row-label--roxane { color: var(--roxane); }
+  .appear-cell {
+    width: 100%;
+    aspect-ratio: 1;
+    max-height: 24px;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    min-width: 0;
+    min-height: 0;
+  }
+  .appear-cell__kiss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    pointer-events: none;
+    background: transparent;
+  }
+  .appear-cell__kiss-svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+    background: transparent !important;
+    border: none;
+    box-shadow: none;
+  }
+  .appear-cell__kiss-svg * {
+    stroke: none;
+  }
+  .appear-cell__kiss-svg--small {
+    width: 11px;
+    height: 11px;
+  }
+  .appear-cell__kiss-svg--legend {
+    width: 15px;
+    height: 15px;
+  }
+  /* Two kisses: larger render target + tighter viewBox so pair fills the cell more */
+  .appear-cell__kiss-svg--double {
+    width: 19px;
+    height: 19px;
+  }
+  .appear-cell__kiss--stacked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+  }
+  .appear-cell__kiss--stacked .appear-cell__kiss-line {
+    display: flex;
+    line-height: 0;
+  }
+  .appear-cell--off {
+    background: linear-gradient(145deg, #ebe6dc 0%, #e3dcd3 100%);
+    opacity: 0.92;
+  }
+  .appear-cell--on.appear-cell--sara {
+    background: linear-gradient(145deg, var(--sara) 0%, color-mix(in srgb, var(--sara) 82%, #000) 100%);
+    border-color: color-mix(in srgb, var(--sara) 65%, #2c2824);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+  .appear-cell--on.appear-cell--roxane {
+    background: linear-gradient(145deg, var(--roxane) 0%, color-mix(in srgb, var(--roxane) 82%, #000) 100%);
+    border-color: color-mix(in srgb, var(--roxane) 65%, #2c2824);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  }
+  .appear-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--ink-mute);
+    font-weight: 600;
+  }
+  .appear-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .appear-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid var(--rule);
+    flex-shrink: 0;
+  }
+  .appear-swatch--on-sara {
+    background: var(--sara);
+    border-color: color-mix(in srgb, var(--sara) 70%, #2c2824);
+  }
+  .appear-swatch--on-roxane {
+    background: var(--roxane);
+    border-color: color-mix(in srgb, var(--roxane) 70%, #2c2824);
+  }
+  .appear-swatch--off {
+    background: linear-gradient(145deg, #ebe6dc, #e3dcd3);
+  }
+  .appear-legend-kiss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    line-height: 0;
+    background: transparent;
+  }
+
+  @supports not (color: color-mix(in srgb, red 50%, blue)) {
+    .appear-cell--on.appear-cell--sara {
+      background: var(--sara);
+      border-color: #a84890;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+    .appear-cell--on.appear-cell--roxane {
+      background: var(--roxane);
+      border-color: #c44f42;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+    .appear-swatch--on-sara { border-color: #a84890; }
+    .appear-swatch--on-roxane { border-color: #c44f42; }
+  }
+
+  footer {
+    text-align: center;
+    color: var(--ink-mute);
+    font-size: 12px;
+    margin-top: 40px;
+  }
+  .footer-line + .footer-line {
+    margin-top: 8px;
+  }
+
+  @media (max-width: 700px) {
+    :root { --spine-x: 64px; }
+    .row, .interchange, .season-banner { grid-template-columns: 64px 1fr; }
+    .station-info, .interchange-info, .banner-info { padding-left: 28px; }
+    .topbar { padding: 12px 16px; flex-wrap: wrap; row-gap: 8px; }
+    .topbar-credit { font-size: 11px; order: 3; width: 100%; text-align: right; padding-right: 0; }
+    .lang-picker { order: 2; margin-left: auto; }
+    .container { padding: 18px 14px 60px; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <span class="brand-icon">M</span>
+      <span id="brand-name">DNA</span>
+      <span class="brand-strap" id="brand-strap"></span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-credit">
+      (<a href="https://x.com/slappepolsen" target="_blank" rel="noopener me">slappepolsen</a>)
+    </div>
+    <div class="lang-picker">
+      <label for="lang" id="lang-label"></label>
+      <select id="lang">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+        <option value="pt">Português</option>
+        <option value="de">Deutsch</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2 class="panel-title" id="map-title"></h2>
+    <div class="map" id="map"></div>
+
+    <footer id="footer"></footer>
+  </div>
+
+  <aside class="legend-panel" id="legend-panel" aria-label="Legend">
+    <button type="button" class="legend-toggle" id="legend-toggle" aria-controls="legend-panel" aria-expanded="true" title="">
+      <span class="legend-chevron" aria-hidden="true">›</span>
+    </button>
+    <div class="legend-head">
+      <h3 id="legend-title"></h3>
+    </div>
+    <div class="legend-body" id="legend-body"></div>
+  </aside>
+
+  <div class="synopsis-modal" id="synopsis-modal" hidden aria-hidden="true">
+    <div class="synopsis-modal-backdrop" id="synopsis-backdrop" tabindex="-1"></div>
+    <div class="synopsis-sheet" role="dialog" aria-modal="true" aria-labelledby="synopsis-sheet-title">
+      <div class="synopsis-sheet-head">
+        <div>
+          <h2 class="synopsis-sheet-title" id="synopsis-sheet-title"></h2>
+        </div>
+        <button type="button" class="synopsis-close" id="synopsis-close"></button>
+      </div>
+      <div class="synopsis-sheet-body">
+        <div class="synopsis-blurb" id="synopsis-blurb"></div>
+        <div class="synopsis-extra" id="synopsis-extra"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const W = "https://demain-nous-appartient.fandom.com/fr/wiki/";
+const ARCS = [
+  [3,26,"Le secret des Lazzari","505-536","11/07/2019","23/08/2019",W+"Le_secret_des_Lazzari",0],
+  [3,27,"Amour fou","537-556","26/08/2019","20/09/2019",W+"Amour_fou",0],
+  [3,28,"Pour le meilleur et pour le pire","557-578","23/09/2019","22/10/2019",W+"Pour_le_meilleur_et_pour_le_pire",0],
+  [3,29,"Disparition","579-593","23/10/2019","12/11/2019",W+"Disparition",0],
+  [3,30,"Incendie","594-616","13/11/2019","13/12/2019",W+"Incendie",0],
+  [3,31,"Origines","617-626","16/12/2019","27/12/2019",W+"Origines_(DNA)",0],
+  [3,32,"La déchéance de Bart","627-646","30/12/2019","24/01/2020",W+"La_d%C3%A9ch%C3%A9ance_de_Bart",2],
+  [3,33,"Psychose","647-666","27/01/2020","21/02/2020",W+"Psychose",3],
+  [3,34,"Révélations","667-686","24/02/2020","20/03/2020",W+"R%C3%A9v%C3%A9lations",0],
+  [3,35,"Prédateur","687-706","15/06/2020","10/07/2020",W+"Pr%C3%A9dateur",0],
+  [4,36,"Jamais dans ma fille","707-726","13/07/2020","7/08/2020",W+"Jamais_sans_ma_fille",0],
+  [4,37,"Le dilemme de Karim","727-749","10/08/2020","9/09/2020",W+"Le_dilemme_de_Karim",3],
+  [4,38,"Ma meilleure ennemie","750-773","10/09/2020","13/10/2020",W+"Ma_meilleure_ennemie_(DNA)",0],
+  [4,39,"La grotte","774-791","14/10/2020","06/11/2020",W+"La_grotte",0],
+  [4,40,"Agression","792-811","09/11/2020","04/12/2020",W+"Agression",0],
+  [4,41,"Home-jacking","812-831","07/12/2020","01/01/2021",W+"Home-jacking",0],
+  [4,42,"Veuf noir","832-851","04/01/2021","29/01/2021",W+"Veuf_noir",0],
+  [4,43,"Black-out","852-866","1/02/2021","19/02/2021",W+"Black-out",0],
+  [4,44,"L’absente","867-876","22/02/2021","05/03/2021",W+"L%E2%80%99absente",0],
+  [4,45,"L’amour-mort","877-896","08/03/2021","02/04/2021",W+"L%E2%80%99amour_%C3%A0_mort",0],
+  [4,46,"L’incruste","897-911","05/04/2021","24/04/2021",W+"L%E2%80%99incruste",3],
+  [4,47,"Engrenage","912-936","26/04/2021","28/05/2021",W+"Engrenage",2],
+  [4,48,"La prunelle de mes yeux","937-946","31/05/2021","11/06/2021",W+"La_prunelle_de_mes_yeux",0],
+  [4,49,"La chute","947-968","14/06/2021","13/07/2021",W+"La_chute",2],
+  [4,50,"La Dame Blanche","969-991","14/07/2021","13/08/2021",W+"La_Dame_Blanche",2],
+  [5,51,"Otages","992-1001","16/08/2021","27/08/2021",W+"Otages",2],
+  [5,52,"Un garçon si parfait","1002-1021","30/08/2021","24/09/2021",W+"Un_gar%C3%A7on_si_parfait",2],
+  [5,53,"Cœur brisé","1022-1041","27/09/2021","22/10/2021",W+"C%C5%93ur_bris%C3%A9",3],
+  [5,54,"Passions","1042-1054","25/10/2021","10/11/2021",W+"Passions_(DNA)",0],
+  [5,55,"Le retour de Rebecca","1055-1071","11/11/2021","03/12/2021",W+"Le_retour_de_Rebecca",0],
+  [5,56,"Boule de neige","1072-1086","07/12/2021","24/12/2021",W+"Boule_de_neige",2],
+  [5,57,"Deux sœurs","1087-1104","27/12/2021","19/01/2022",W+"Deux_s%C5%93urs",2],
+  [5,58,"Peur sur les Delcourt","1105-1121","21/01/2022","14/02/2022",W+"Peur_sur_les_Delcourt",2],
+  [5,59,"L’homme que j’aime","1122-1131","15/02/2022","28/02/2022",W+"L%27homme_que_j%27aime",0],
+  [5,60,"Dilemmes","1132-1146","01/03/2022","21/03/2022",W+"Dilemmes",0],
+  [5,61,"Murder party","1147-1163","22/03/2022","13/04/2022",W+"Murder_party",2],
+  [5,62,"Évadés","1164-1176","14/04/2022","02/05/2022",W+"%C3%89vad%C3%A9s",0],
+  [5,63,"Noces rouges","1177-1196","03/05/2022","30/05/2022",W+"Noces_rouges",2],
+  [5,64,"Emprise","1197-1216","31/05/2022","27/06/2022",W+"Emprise",2],
+  [5,65,"Sabotages","1217-1234","28/06/2022","21/07/2022",W+"Sabotages",2],
+  [5,66,"Les blessures du passé","1235-1252","22/07/2022","16/08/2022",W+"Les_blessures_du_pass%C3%A9",0],
+  [5,67,"Règlement de comptes","1253-1261","17/08/2022","29/08/2022",W+"R%C3%A8glement_de_comptes",2],
+  [6,68,"Pièges","1262-1278","30/08/2022","21/09/2022",W+"Pi%C3%A8ges",0],
+  [6,69,"Justices","1279-1295","22/09/2022","14/10/2022",W+"Justices",0],
+  [6,70,"Illusions perdues","1296-1312","17/10/2022","08/11/2022",W+"Illusions_perdues",0],
+  [6,71,"Les frères ennemis","1313-1320","09/11/2022","18/11/2022",W+"Les_fr%C3%A8res_ennemis",0],
+  [6,72,"Huis clos","1321-1332","19/12/2022","03/01/2023",W+"Huis_clos",0],
+  [6,73,"Crash","1333-1345","04/01/2023","20/01/2023",W+"Crash",3],
+  [6,74,"Abandonnés","1346-1360","23/01/2023","10/02/2023",W+"Abandonn%C3%A9s",0],
+  [6,75,"Pieds et poings liés","1361-1380","13/02/2023","10/03/2023",W+"Pieds_et_poings_li%C3%A9s",0],
+  [6,76,"Obsessions","1381-1395","13/03/2023","31/03/2023",W+"Obsessions",2],
+  [6,77,"Le choix de Martin","1396-1407","03/04/2023","18/04/2023",W+"Le_choix_de_Martin",0],
+  [6,78,"Chimères","1408-1415","19/04/2023","28/04/2023",W+"Chim%C3%A8res",2],
+  [6,79,"L'union des Delcourt","1416-1430","01/05/2023","19/05/2023",W+"L%E2%80%99union_des_Delcourt",0],
+  [6,80,"À la folie","1431-1445","22/05/2023","09/06/2023",W+"%C3%80_la_folie",0],
+  [6,81,"Dans la tourmente","1446-1460","12/06/2023","30/06/2023",W+"Dans_la_tourmente",3],
+  [6,82,"Le fol amour","1461-1471","03/07/2023","17/07/2023",W+"Le_fol_amour",0],
+  [6,83,"Petite sœur","1472-1495","18/07/2023","18/08/2023",W+"Petite_s%C5%93ur",3],
+  [7,84,"Trahisons","1496-1507","21/08/2023","05/09/2023",W+"Trahisons",0],
+  [7,85,"Destins","1508-1520","06/09/2023","25/09/2023",W+"Destins",0],
+  [7,86,"Effet domino","1521-1535","26/09/2023","16/10/2023",W+"Effet_domino",0],
+  [7,87,"Résurgence","1536-1547","17/10/2023","01/11/2023",W+"R%C3%A9surgence",3],
+  [7,88,"Saisir sa chance","1548-1560","02/11/2023","20/11/2023",W+"Saisir_sa_chance",0],
+  [7,89,"Pour le meilleur","1561-1568","21/11/2023","30/11/2023",W+"Pour_le_meilleur",3],
+  [7,90,"Un père","1569-1583","01/12/2023","21/12/2023",W+"Un_p%C3%A8re",0],
+  [7,91,"Joyeux Noël","1584-1598","22/12/2023","11/01/2024",W+"Joyeux_No%C3%ABl",0],
+  [7,92,"Implacable","1599-1612","12/01/2024","31/01/2024",W+"Implacable",0],
+  [7,93,"L'épreuve du doute","1613-1628","01/02/2024","22/02/2024",W+"L%27%C3%A9preuve_du_doute",0],
+  [7,94,"Une affaire de famille","1629-1642","23/02/2024","13/03/2024",W+"Une_affaire_de_famille",0],
+  [7,95,"Double jeu","1643-1651","14/03/2024","26/03/2024",W+"Double_jeu",0],
+  [7,96,"Sacrifice","1652-1665","27/03/2024","15/04/2024",W+"Sacrifice",0],
+  [7,97,"Bouche cousue","1666-1676","16/04/2024","30/04/2024",W+"Bouche_cousue",2],
+  [7,98,"Esprit de famille","1677-1690","01/05/2024","21/05/2024",W+"Esprit_de_famille",0],
+  [7,99,"Intime conviction","1691-1700","22/05/2024","04/06/2024",W+"Intime_conviction",0],
+  [7,100,"Sur le fil","1701-1713","05/06/2024","21/06/2024",W+"Sur_le_fil",0],
+  [7,101,"Grain de sable","1714-1723","24/06/2024","10/07/2024",W+"Grain_de_sable",0],
+  [7,102,"Trouble jeu","1724-1736","11/07/2024","29/07/2024",W+"Trouble_jeu",0],
+  [7,103,"Manipulations","1737-1748","30/07/2024","14/08/2024",W+"Manipulations",3],
+  [7,104,"Soleil noir","1749-1765","15/08/2024","06/09/2024",W+"Soleil_noir",2],
+  [8,105,"Les évadés","1766-1777","09/09/2024","24/09/2024",W+"Les_%C3%A9vad%C3%A9s",0],
+  [8,106,"Onde de choc","1778-1787","25/09/2024","08/10/2024",W+"Onde_de_choc",0],
+  [8,107,"Le secret de Romy","1788-1797","09/10/2024","22/10/2024",W+"Le_secret_de_Romy",0],
+  [8,108,"Oppressions","1798-1817","23/10/2024","19/11/2024",W+"Oppressions",3],
+  [8,109,"Ces amis qui vous veulent du bien","1818-1832","20/11/2024","10/12/2024",W+"Ces_amis_qui_vous_veulent_du_bien",0],
+  [8,110,"En toute innocence","1833-1844","11/12/2024","26/12/2024",W+"En_toute_innocence",0],
+  [8,111,"Jeu de dupes","1845-1855","27/12/2024","10/01/2025",W+"Jeu_de_dupes",0],
+  [8,112,"Crescendo","1856-1871","13/01/2025","03/02/2025",W+"Crescendo",3],
+  [8,113,"Le mensonge d'Audrey","1872-1880","04/02/2025","14/02/2025",W+"Le_mensonge_d%27Audrey",0],
+  [8,114,"Ricochets","1881-1895","17/02/2025","07/03/2025",W+"Ricochets",0],
+  [8,115,"En plein doute","1896-1909","10/03/2025","27/03/2025",W+"En_plein_doute",1],
+  [8,116,"Apparences","1910-1924","28/03/2025","17/04/2025",W+"Apparences",1],
+  [8,117,"Contagion","1925-1940","18/04/2025","09/05/2025",W+"Contagion",0],
+  [8,118,"Ensemble","1941-1956","12/05/2025","02/06/2025",W+"Ensemble",1],
+  [8,119,"Nocif","1957-1970","03/06/2025","20/06/2025",W+"Nocif",0],
+  [8,120,"La trahison","1971-1982","23/06/2025","08/07/2025",W+"La_trahison",0],
+  [8,121,"Prêts-tout","1983-2000","09/07/2025","01/08/2025",W+"Pr%C3%AAts_%C3%A0_tout",1],
+  [8,122,"Dangereux hasards","2001-2015","04/08/2025","22/08/2025",W+"Dangereux_hasards",3],
+  [8,123,"Révélations","2016-2025","25/08/2025","05/09/2025",W+"R%C3%A9v%C3%A9lations_(2025)",0],
+  [9,124,"Et après ?","2026-2035","08/09/2025","19/09/2025",W+"Et_apr%C3%A8s_%3F",3],
+  [9,125,"Jugements","2036-2042","22/09/2025","30/09/2025",W+"Jugements",0],
+  [9,126,"Contre feux","2043-2054","01/10/2025","16/10/2025",W+"Pyromane",2],
+  [9,127,"Hors des sentiers battus","2055-2067","17/10/2025","04/11/2025",W+"Hors_des_sentiers_battus",1],
+  [9,128,"Sous nos yeux","2068-2080","05/11/2025","24/11/2025",W+"Sous_nos_yeux",3],
+  [9,129,"L'effet papillon","2081-2090","25/11/2025","08/12/2025",W+"L%27effet_papillon",2],
+  [9,130,"Un air de famille","2091-2099","09/12/2025","19/12/2025",W+"Un_air_de_famille_(DNA)",1],
+  [9,131,"Le divin enfant","2100-2111","22/12/2025","05/01/2026",W+"Le_divin_enfant",2],
+  [9,132,"L'escapade","2112-2124","06/01/2026","22/01/2026",W+"L%27escapade",2],
+  [9,133,"La goutte d'eau","2125-2139","23/01/2026","12/02/2026",W+"La_goutte_d%27eau",3],
+  [9,134,"Vendredi treize","2140-2146","13/02/2026","23/02/2026",W+"Vendredi_treize",4],
+  [9,135,"Duel","2147-2160","24/02/2026","13/03/2026",W+"Duel",4],
+  [9,136,"Tout pour ma sœur","2161-2173","16/03/2026","01/04/2026",W+"Tout_pour_ma_s%C5%93ur",0],
+  [9,137,"Petits et grands mensonges","2174-2186","02/04/2026","20/04/2026",W+"Petits_et_grands_mensonges",0],
+  [9,138,"Mirage","2187-2193","21/04/2026","29/04/2026",W+"Mirage",0],
+  [9,139,"Derrière le charme","2194-2205","30/04/2026","15/05/2026",W+"Derri%C3%A8re_le_charme",0],
+  [9,140,"Avis de tempête","2206-2221","18/05/2026","8/06/2026",W+"Avis_de_temp%C3%AAte",0],
+  [9,141,"La chute de Karim","2222-2235","9/06/2026","26/06/2026",W+"La_chute_de_Karim",2],
+  [9,142,"Le secret d'Astrid","2236-2247","29/06/2026","14/07/2026",W+"Le_secret_d%27Astrid",0]
+];
+
+const SEASON_COLORS = {
+  3: "#e39f22",
+  4: "#9ba13c",
+  5: "#8a5e9b",
+  6: "#e8823a",
+  7: "#4f8a46",
+  8: "#a35638",
+  9: "#bfb21a"
+};
+const ROLE_COLORS = { 1: "var(--roxane)", 2: "var(--sara)", 3: "var(--both)" };
+/** Arc status (ARCS last column): 0 substop · 1 roxane · 2 sara · 3 both · 4 featured (no role badge) */
+
+const MILESTONES = [
+  { id: "firstMeeting", ep: 632,  date: "06/01/2020", color: "#f07db0", symbol: "\u274B" },
+  { id: "dating",       ep: 639,  date: "15/01/2020", color: "#f16b3d", symbol: "\u2665" },
+  { id: "engagement",   ep: 1043, date: "26/10/2021", color: "#e39f22", symbol: "\u25C6" },
+  { id: "wedding",      ep: 1091, date: "31/12/2021", color: "#9ba13c", symbol: "\u26AD" },
+  { id: "enora",        ep: 1370, date: "24/02/2023", color: "#a35638", symbol: "\u2605" }
+];
+
+/** Optional per-episode notes nested under an arc row (matched by ep range). No separate map stop.
+ *  Optional `emoji`: prefix before the label (emoji, short text, or both). Defaults to ⚠️ if omitted or empty. */
+const ARC_EVENTS = [
+  {
+    ep: 920,
+    emoji: "⚠️",
+    labels: {
+      en: "Aurore discovers Roxane's true identity",
+      fr: "Aurore découvre la véritable identité de Roxane",
+      es: "Aurore descubre la verdadera identidad de Roxane",
+      pt: "Aurore descobre a verdadeira identidade de Roxane",
+      de: "Aurore entdeckt Roxanes wahre Identität"
+    }
+  },
+  {
+    ep: 930,
+    emoji: "💻",
+    labels: {
+      en: "Aurore asks Roxane for a favor",
+      fr: "Aurore demande une faveur à Roxane",
+      es: "Aurore le pide un favor a Roxane",
+      pt: "Aurore pede um favor a Roxane",
+      de: "Aurore bittet Roxane um einen Gefallen"
+    }
+  },
+  {
+    ep: 932,
+    emoji: "💼",
+    labels: {
+      en: "Georges proposes that Roxane join the PTS department",
+      fr: "Georges propose à Roxane de rejoindre le service PTS",
+      es: "Georges propone a Roxane incorporarse al departamento PTS",
+      pt: "Georges propõe a Roxane integrar o departamento PTS",
+      de: "Georges schlägt Roxane vor, der PTS-Abteilung beizutreten"
+    }
+  },
+  {
+    ep: 992,
+    emoji: "💼",
+    labels: {
+      en: "Roxane's first day at work for PTS. During a stake-out, Karim asks Sara if she and Roxane have talked about kids yet",
+      fr: "Premier jour de Roxane au PTS. Lors d'une surveillance, Karim demande à Sara si elle et Roxane ont déjà parlé d'enfants",
+      es: "Primer día de Roxane en el PTS. Durante una vigilancia, Karim le pregunta a Sara si ya han hablado de tener hijos",
+      pt: "Primeiro dia de Roxane no serviço PTS. Durante uma vigilância, Karim pergunta a Sara se ela e Roxane já falaram em ter filhos",
+      de: "Roxanes erster Arbeitstag bei der PTS. Bei einer Observation fragt Karim Sara, ob sie und Roxane schon über Kinder gesprochen haben"
+    }
+  },
+  {
+    ep: 1001,
+    emoji: "🎖️",
+    labels: {
+      en: "Sara is promoted to brigadier",
+      fr: "Sara est promue brigadière",
+      es: "Sara asciende a brigada",
+      pt: "Sara é promovida ao posto de brigadeira",
+      de: "Sara wird zur Brigadierin befördert"
+    }
+  },
+  {
+    ep: 1032,
+    emoji: "🚨",
+    labels: {
+      en: "Roxane is kidnapped",
+      fr: "Roxane est enlevée",
+      es: "Secuestran a Roxane",
+      pt: "Roxane é raptada",
+      de: "Roxane wird entführt"
+    }
+  },
+  {
+    ep: 1138,
+    emoji: "👶",
+    labels: {
+      en: "After some rather comedic arguing, they decide Roxane will carry their first baby",
+      fr: "Après une dispute plutôt comique, elles décident que Roxane portera le premier bébé",
+      es: "Tras discutir de forma bastante cómica, deciden que Roxane llevará el primer bebé",
+      pt: "Depois de discussões bastante cómicas, decidem que a Roxane levará o primeiro bebé",
+      de: "Nach einigem eher komischen Gezanke einigen sie sich darauf, dass Roxane das erste Baby austrägt"
+    }
+  },
+  {
+    ep: 1168,
+    emoji: "🔥",
+    labels: {
+      en: "Roxane + fertility hormones = horny make-out session with Sara",
+      fr: "Roxane + hormones de fertilité = session de baisers torrides avec Sara",
+      es: "Roxane + hormonas de fertilidad = sesión de besos muy calientes con Sara",
+      pt: "Roxane + hormonas de fertilidade = sessão de beijos bem quentes com Sara",
+      de: "Roxane + Fruchtbarkeitshormone = ziemlich geile Knutschsession mit Sara"
+    }
+  },
+  {
+    ep: 1189,
+    emoji: "💔",
+    labels: {
+      en: "Roxane's IVF is unsuccessful",
+      fr: "La FIV de Roxane échoue",
+      es: "La FIV de Roxane no tiene éxito",
+      pt: "A FIV de Roxane não resulta",
+      de: "Roxanes IVF bleibt erfolglos"
+    }
+  },
+  {
+    ep: 1191,
+    emoji: "🍼",
+    labels: {
+      en: "Sara and Roxane ask Nordine whether he'll be their donor",
+      fr: "Sara et Roxane demandent à Nordine s'il veut être leur donneur",
+      es: "Sara y Roxane preguntan a Nordine si quiere ser su donante",
+      pt: "Sara e Roxane perguntam a Nordine se quer ser o seu dador",
+      de: "Sara und Roxane fragen Nordine, ob er ihr Spender sein will"
+    }
+  },
+  {
+    ep: 1192,
+    emoji: "🍼",
+    labels: {
+      en: "Sara and Roxane ask Damien whether he'll be their donor",
+      fr: "Sara et Roxane demandent à Damien s'il veut être leur donneur",
+      es: "Sara y Roxane preguntan a Damien si quiere ser su donante",
+      pt: "Sara e Roxane perguntam a Damien se quer ser o seu dador",
+      de: "Sara und Roxane fragen Damien, ob er ihr Spender sein will"
+    }
+  },
+  {
+    ep: 1198,
+    emoji: "🍼",
+    labels: {
+      en: "Bart suggests he could be their donor",
+      fr: "Bart propose d'être leur donneur",
+      es: "Bart sugiere que podría ser su donante",
+      pt: "Bart sugere que poderia ser o seu dador",
+      de: "Bart schlägt vor, ihr Spender zu sein"
+    }
+  },
+  {
+    ep: 1199,
+    emoji: "🍼",
+    labels: {
+      en: "Roxane and Sara choose Bart as biological father but will be the legal parents",
+      fr: "Sara et Roxane choisissent Bart comme père biologique, mais elles seront les parents légaux",
+      es: "Sara y Roxane eligen a Bart como padre biológico, pero serán las madres legales",
+      pt: "Sara e Roxane escolhem Bart como pai biológico, mas serão as mães legais",
+      de: "Sara und Roxane wählen Bart zum biologischen Vater, werden aber die rechtlichen Eltern sein"
+    }
+  },
+  {
+    ep: 1209,
+    emoji: "😏",
+    labels: {
+      en: "Bart shows up at their place to donate sperm",
+      fr: "Bart se présente chez elles pour donner son sperme",
+      es: "Bart va a casa de ellas a donar esperma",
+      pt: "Bart vai à casa delas para doar esperma",
+      de: "Bart kommt zu ihnen nach Hause, um Samen zu spenden"
+    }
+  },
+  {
+    ep: 1222,
+    emoji: "🤰",
+    labels: {
+      en: "Home test positive, hospital test also confirms",
+      fr: "Test positif à la maison, confirmation à l'hôpital",
+      es: "Prueba en casa positiva, hospital lo confirma",
+      pt: "Teste em casa positivo, hospital confirma",
+      de: "Heimtest positiv, Klinik bestätigt"
+    }
+  },
+  {
+    ep: 1228,
+    emoji: "🩺",
+    labels: {
+      en: "First ultrasound appointment",
+      fr: "Première échographie",
+      es: "Primera ecografía de seguimiento",
+      pt: "Primeira ecografia de acompanhamento",
+      de: "Erster Kontroll-Ultraschall"
+    }
+  },
+  {
+    ep: 1232,
+    emoji: "🤢",
+    labels: {
+      en: "Roxane only tolerates goji berries. Nordine eats a bunch of them. Big mistake!",
+      fr: "Roxane ne tolère que les baies de goji. Nordine lui en vole une. Grosse erreur !",
+      es: "Roxane solo tolera las bayas de goji. Nordine le roba una. ¡Fatal!",
+      pt: "Roxane só tolera bagas de goji. Nordine rouba-lhe uma. Grande erro!",
+      de: "Roxane verträgt nur Goji-Beeren. Nordine nimmt ihr eine weg. Großer Fehler!"
+    }
+  },
+  {
+    ep: 1241,
+    emoji: "😂",
+    labels: {
+      en: "Sara hides at the beach from pregnant Roxane. Roxane finds her anyway",
+      fr: "Sara se cache à la plage pour fuir Roxane enceinte. Roxane la retrouve quand même",
+      es: "Sara se refugia en la playa huyendo de Roxane embarazada. Roxane la descubre igualmente",
+      pt: "Sara esconde-se na praia para fugir da Roxane grávida. Roxane acaba por a encontrar",
+      de: "Sara versteckt sich am Strand vor schwangerer Roxane. Roxane findet sie trotzdem"
+    }
+  },
+  {
+    ep: 1245,
+    emoji: "🧳",
+    labels: {
+      en: "Roxara move in with Bart",
+      fr: "Roxara emménagent chez Bart",
+      es: "Roxara se mudan con Bart",
+      pt: "Roxara mudam-se para casa de Bart",
+      de: "Roxara ziehen zu Bart"
+    }
+  },
+  {
+    ep: 1255,
+    emoji: "💓",
+    labels: {
+      en: "They hear the baby's heartbeat for the first time",
+      fr: "Elles entendent le cœur du bébé pour la première fois",
+      es: "Oyen el latido del bebé por primera vez",
+      pt: "Ouvem o coração do bebé pela primeira vez",
+      de: "Sie hören zum ersten Mal das Babyherz"
+    }
+  },
+  {
+    ep: 1315,
+    emoji: "🏡",
+    labels: {
+      en: "They move back to their own place",
+      fr: "Elles retournent chez elles",
+      es: "Vuelven a su casa",
+      pt: "Voltam para casa delas",
+      de: "Sie ziehen zurück in ihre eigene Wohnung"
+    }
+  },
+  {
+    ep: 1323,
+    emoji: "✉️",
+    labels: {
+      en: "The scan could show the sex. Roxane does not want to know. The result is sealed in an envelope for later",
+      fr: "L'échographie pourrait indiquer le sexe. Roxane ne veut pas savoir. Le résultat est mis sous enveloppe pour plus tard",
+      es: "La ecografía podría mostrar el sexo. Roxane no quiere saberlo. Sellan el resultado en un sobre para más tarde",
+      pt: "A ecografia poderia mostrar o sexo. Roxane não quer saber. O resultado vai num envelope fechado para mais tarde",
+      de: "Der Ultraschall könnte das Geschlecht zeigen. Roxane will es nicht wissen. Das Ergebnis kommt in einen Umschlag für später"
+    }
+  },
+  {
+    ep: 1324,
+    emoji: "🎄",
+    labels: {
+      en: "Christmas with Bart, gift exchange. They open the envelope: it's going to be a girl",
+      fr: "Noël avec Bart, échange de cadeaux. Elles ouvrent l'enveloppe : ce sera une fille",
+      es: "Navidad con Bart, intercambio de regalos. Abren el sobre: será niña",
+      pt: "Natal com Bart, troca de presentes. Abrem o envelope: vai ser menina",
+      de: "Weihnachten mit Bart, Geschenke tauschen. Sie öffnen den Umschlag: es wird ein Mädchen"
+    }
+  },
+  {
+    ep: 1333,
+    emoji: "✈️",
+    labels: {
+      en: "Sara's flying lesson ends in a crash; she's in a coma",
+      fr: "La première leçon de vol de Sara se termine en crash ; elle est dans le coma",
+      es: "La clase de vuelo de Sara acaba en accidente; entra en coma",
+      pt: "A aula de voo de Sara acaba em acidente; Sara fica em coma",
+      de: "Saras Flugstunde endet mit einem Absturz; sie liegt im Koma"
+    }
+  },
+  {
+    ep: 1340,
+    emoji: "💻",
+    labels: {
+      en: "Lisa thinks Roxane is the hacker, David is back in town, and Sara wakes from her coma",
+      fr: "Lisa prend Roxane pour la hacker, David est de retour, et Sara sort du coma",
+      es: "Lisa cree que Roxane es la hacker, David vuelve y Sara despierta del coma",
+      pt: "Lisa acha que Roxane é a hacker, David volta à cidade e Sara acorda do coma",
+      de: "Lisa hält Roxane für die Hackerin, David ist zurück, Sara erwacht aus dem Koma"
+    }
+  },
+  {
+    ep: 1342,
+    emoji: "💬",
+    labels: {
+      en: "Roxane confesses to Bart that she is Aurélie",
+      fr: "Roxane avoue à Bart qu'elle est Aurélie",
+      es: "Roxane le confiesa a Bart que es Aurélie",
+      pt: "Roxane confessa a Bart que é a Aurélie",
+      de: "Roxane gesteht Bart, dass sie Aurélie ist"
+    }
+  },
+  {
+    ep: 1345,
+    emoji: "🎉",
+    labels: {
+      en: "The DNA swap works; with Aurore's help, Roxane is safe for good",
+      fr: "La permutation d'échantillons ADN fonctionne ; avec Aurore, Roxane est définitivement hors de danger",
+      es: "El cambio de muestras de ADN funciona; con Aurore, Roxane queda a salvo",
+      pt: "A troca de amostras de ADN resulta; com Aurore, Roxane fica a salvo de vez",
+      de: "Der DNA-Proben-Tausch klappt; mit Aurores Hilfe ist Roxane endgültig sicher"
+    }
+  },
+  {
+    ep: 1360,
+    emoji: "🧑‍🧑‍🧒",
+    labels: {
+      en: 'Roxane says "Raynaud-Thiemen family"',
+      fr: "Roxane dit « famille Raynaud-Thiemen »",
+      es: 'Roxane dice «familia Raynaud-Thiemen»',
+      pt: 'Roxane diz «família Raynaud-Thiemen»',
+      de: 'Roxane sagt „Familie Raynaud-Thiemen“'
+    }
+  },
+  {
+    ep: 1470,
+    emoji: "💋",
+    labels: {
+      en: "Enora asleep, so the mothers have a passionate make-out session",
+      fr: "Enora dort, alors les deux mamans s'embrassent passionnément",
+      es: "Enora dormida, así que las madres tienen una sesión de besos apasionados",
+      pt: "Enora a dormir, por isso as mães beijam-se apaixonadamente durante um bom tempo",
+      de: "Enora schläft, also küssen sich die beiden Mütter leidenschaftlich"
+    }
+  },
+  {
+    ep: 1472,
+    emoji: "Saga de l'été ☀️",
+    labels: {
+      en: "",
+      fr: "",
+      es: "",
+      pt: "",
+      de: ""
+    }
+  },
+  {
+    ep: 1505,
+    emoji: "🦷",
+    labels: {
+      en: '"Toof Party" (Enora\'s first tooth)',
+      fr: "« Toof Party » (première dent d'Enora)",
+      es: "« Toof Party » (primer diente de Enora)",
+      pt: "« Toof Party » (primeiro dente da Enora)",
+      de: "„Toof Party“ (Enoras erster Zahn)"
+    }
+  },
+  {
+    ep: 1636,
+    emoji: "🏍️",
+    labels: {
+      en: "Roxane buys her motorcycle",
+      fr: "Roxane achète sa moto",
+      es: "Roxane compra su moto",
+      pt: "Roxane compra a sua mota",
+      de: "Roxane kauft ihr Motorrad"
+    }
+  },
+  {
+    ep: 1641,
+    emoji: "🔥",
+    labels: {
+      en: "Roxane rides her motorcycle to work",
+      fr: "Roxane va au travail en moto",
+      es: "Roxane va al trabajo en moto",
+      pt: "Roxane vai para o trabalho de mota",
+      de: "Roxane fährt mit dem Motorrad zur Arbeit"
+    }
+  },
+  {
+    ep: 1642,
+    emoji: "😳",
+    labels: {
+      en: "Adeline tries to seduce Roxane after the bike ride (unsuccessful)",
+      fr: "Adeline tente de séduire Roxane après la balade en moto (sans succès)",
+      es: "Adeline intenta seducir a Roxane tras la salida en moto (sin éxito)",
+      pt: "Adeline tenta seduzir Roxane após o passeio de mota (sem sucesso)",
+      de: "Adeline versucht Roxane nach der Motorradtour zu verführen (erfolglos)"
+    }
+  },
+  {
+    ep: 1672,
+    emoji: "👶",
+    labels: {
+      en: "They talk about a second baby: Sara wants to carry; Roxane is hesitant",
+      fr: "Ils parlent d'un deuxième bébé : Sara veut porter ; Roxane hésite",
+      es: "Hablan de un segundo bebé: Sara quiere gestar; Roxane duda",
+      pt: "Falam de um segundo bebé: a Sara quer carregar; a Roxane hesita",
+      de: "Sie sprechen über ein zweites Baby: Sara möchte tragen; Roxane zögert"
+    }
+  },
+  {
+    ep: 1684,
+    emoji: "💞",
+    labels: {
+      en: "After tension, Roxane and Sara reconcile. Roxane tells Sara she loves her for life",
+      fr: "Après des tensions, Roxane et Sara se réconcilient. Roxane dit à Sara qu'elle l'aime pour la vie",
+      es: "Tras la tensión, Roxane y Sara se reconcilian. Roxane le dice a Sara que la amará de por vida",
+      pt: "Após tensão, Roxane e Sara reconciliam-se. Roxane diz a Sara que a ama para a vida",
+      de: "Nach Spannung versöhnen sich Roxane und Sara. Roxane sagt Sara, dass sie sie fürs Leben liebt"
+    }
+  },
+  {
+    ep: 1736,
+    emoji: "🚤",
+    labels: {
+      en: "Sara and Roxane are kidnapped on a boat",
+      fr: "Sara et Roxane sont enlevées sur un bateau",
+      es: "Sara y Roxane son secuestradas en un barco",
+      pt: "Sara e Roxane são raptadas num barco",
+      de: "Sara und Roxane werden auf einem Boot entführt"
+    }
+  },
+  {
+    ep: 1805,
+    emoji: "⚠️",
+    labels: {
+      en: "Sara is sexually assaulted",
+      fr: "Sara est victime d'une agression sexuelle",
+      es: "Sara sufre una agresión sexual",
+      pt: "Sara é vítima de agressão sexual",
+      de: "Sara erlebt einen sexuellen Übergriff"
+    }
+  },
+  {
+    ep: 2026,
+    emoji: "🌋",
+    labels: {
+      en: "Earthquake hits Sète",
+      fr: "Un séisme frappe Sète",
+      es: "Un terremoto sacude Sète",
+      pt: "Um sismo atinge Sète",
+      de: "Ein Erdbeben erschüttert Sète"
+    }
+  },
+  {
+    ep: 2027,
+    emoji: "🏥",
+    labels: {
+      en: "Roxane is found under the rubble and rushed to hospital",
+      fr: "Roxane est retrouvée sous les décombres et conduite d'urgence à l'hôpital",
+      es: "Encuentran a Roxane bajo los escombros y la llevan de urgencia al hospital",
+      pt: "Roxane é encontrada sob os escombros e levada de urgência ao hospital",
+      de: "Roxane wird unter den Trümmern gefunden und notfallmässig ins Spital gebracht"
+    }
+  },
+  {
+    ep: 2028,
+    emoji: "🔪",
+    labels: {
+      en: "Roxane is in a coma. The doctor tells Sara that Roxane was stabbed",
+      fr: "Roxane est dans le coma. Le médecin apprend à Sara que Roxane a été poignardée",
+      es: "Roxane está en coma. El médico le dice a Sara que Roxane fue apuñalada",
+      pt: "Roxane está em coma. O médico diz a Sara que Roxane foi esfaqueada",
+      de: "Roxane liegt im Koma. Der Arzt teilt Sara mit, dass Roxane erstochen wurde"
+    }
+  },
+  {
+    ep: 2032,
+    emoji: "🤫",
+    labels: {
+      en: "Sara and Aurore summon Laurie, who is clearly hiding something",
+      fr: "Sara et Aurore convoquent Laurie, qui cache visiblement quelque chose",
+      es: "Sara y Aurore citan a Laurie, que a todas luces oculta algo",
+      pt: "Sara e Aurore convocam Laurie, que está claramente a esconder algo",
+      de: "Sara und Aurore laden Laurie vor, die eindeutig etwas verheimlicht"
+    }
+  },
+  {
+    ep: 2034,
+    emoji: "❤️‍🩹",
+    labels: {
+      en: "Roxane wakes up",
+      fr: "Roxane se réveille",
+      es: "Roxane despierta",
+      pt: "Roxane acorda",
+      de: "Roxane erwacht"
+    }
+  },
+  {
+    ep: 2035,
+    emoji: "💞",
+    labels: {
+      en: "Roxane says she stayed silent out of shame and because she no longer recognized herself, felt like she did as Aurélie. Sara says she sees Roxane as the person who shares her life",
+      fr: "Roxane dit s'être tue par honte et parce qu'elle ne se reconnaissait plus, qu'elle se sentait comme à l'époque d'Aurélie. Sara répond qu'elle voit Roxane comme la personne qui partage sa vie",
+      es: "Roxane dice que guardó silencio por vergüenza y porque ya no se reconocía, se sentía como cuando era Aurélie. Sara le dice que ve a Roxane como la persona que comparte su vida",
+      pt: "Roxane diz que calou por vergonha e porque já não se reconhecia, sentia-se como quando era Aurélie. Sara diz que vê Roxane como a pessoa que partilha a vida consigo",
+      de: "Roxane sagt, sie habe aus Scham geschwiegen und weil sie sich nicht mehr wiedererkannt habe, sich wie als Aurélie gefühlt habe. Sara sagt, sie sehe Roxane als die Person, die ihr Leben teilt"
+    }
+  },
+  {
+    ep: 2036,
+    emoji: "🤝",
+    labels: {
+      en: "Roxane and Sara meet Erica, officially",
+      fr: "Roxane et Sara rencontrent Erica",
+      es: "Roxane y Sara conocen a Erica",
+      pt: "Roxane e Sara conhecem Erica",
+      de: "Roxane und Sara lernen Erica kennen"
+    }
+  },
+  {
+    ep: 2041,
+    emoji: "🏠",
+    labels: {
+      en: "Roxane and Sara hunt for a new house",
+      fr: "Roxane et Sara cherchent une nouvelle maison",
+      es: "Roxane y Sara buscan una nueva casa",
+      pt: "Roxane e Sara procuram uma nova casa",
+      de: "Roxane und Sara sind auf Haussuche"
+    }
+  },
+  {
+    ep: 2046,
+    emoji: "⚖️",
+    labels: {
+      en: "Erica is questioned, Bart is angry at Sara because of it",
+      fr: "Erica est entendue au commissariat, Bart en veut à Sara",
+      es: "Interrogan a Erica en comisaría, Bart está enfadado con Sara por ello",
+      pt: "Erica é ouvida na esquadra, Bart está zangado com Sara por causa disso",
+      de: "Erica wird vernommen, Bart ist deswegen wütend auf Sara"
+    }
+  },
+  {
+    ep: 2139,
+    emoji: "✨",
+    labels: {
+      en: "“Maybe that's the miracle solution”",
+      fr: "« Peut-être que c'est la solution miracle »",
+      es: "«Quizá esa sea la solución milagrosa»",
+      pt: "«Talvez essa seja a solução milagrosa»",
+      de: "“Vielleicht ist das die Wunderlösung”"
+    }
+  },
+  {
+    ep: 2140,
+    emoji: "💕",
+    labels: {
+      en: "“You're the woman of my life” / “You're the woman of my life, too”",
+      fr: "« Tu es la femme de ma vie » / « Toi aussi, tu es la femme de ma vie »",
+      es: "«Eres la mujer de mi vida» / «Tú también eres la mujer de mi vida»",
+      pt: "«És a mulher da minha vida» / «Tu também és a mulher da minha vida»",
+      de: "„Du bist die Frau meines Lebens“ / „Du bist auch die Frau meines Lebens“"
+    }
+  },
+  {
+    ep: 2141,
+    emoji: "💐",
+    labels: {
+      en: "Sara and Roxane are trying different approaches to win each other back…",
+      fr: "Sara et Roxane tentent différentes approches pour se reconquérir…",
+      es: "Sara y Roxane prueban distintas formas de reconquistarse…",
+      pt: "Sara e Roxane experimentam abordagens diferentes para se reconquistarem…",
+      de: "Sara und Roxane versuchen auf verschiedene Weise, sich zurückzugewinnen…"
+    }
+  },
+  {
+    ep: 2142,
+    emoji: "💆",
+    labels: {
+      en: "Roxane gives Sara a massage",
+      fr: "Roxane fait un massage à Sara",
+      es: "Roxane le da un masaje a Sara",
+      pt: "Roxane dá uma massagem a Sara",
+      de: "Roxane massiert Sara"
+    }
+  },
+  {
+    ep: 2147,
+    emoji: "🎂",
+    labels: {
+      en: "Enora's birthday party at Bart's",
+      fr: "Fête d'anniversaire d'Enora chez Bart",
+      es: "Fiesta de cumpleaños de Enora en casa de Bart",
+      pt: "Festa de aniversário da Enora em casa de Bart",
+      de: "Enoras Geburtstagsfeier bei Bart"
+    }
+  },
+  {
+    ep: 2156,
+    emoji: "❤️‍🔥",
+    labels: {
+      en: "Roxara is intimate again",
+      fr: "Roxara : de nouveau intimes",
+      es: "Roxara vuelve a la intimidad",
+      pt: "Roxara voltam a ser íntimas",
+      de: "Roxara finden wieder zueinander"
+    }
+  },
+  {
+    ep: 2181,
+    emoji: "😱",
+    labels: {
+      en: "Roxane freaks out over lice",
+      fr: "Roxane panique à cause des poux",
+      es: "Roxane entra en pánico por los piojos",
+      pt: "Roxane entra em pânico por causa dos piolhos",
+      de: "Roxane flippt wegen Läusen aus"
+    }
+  },
+  {
+    ep: 2182,
+    emoji: "🧬",
+    labels: {
+      en: "Bart would like Enora to know that he's her biological father",
+      fr: "Bart aimerait qu'Enora sache qu'il est son père biologique",
+      es: "Bart querría que Enora supiera que él es su padre biológico",
+      pt: "Bart gostaria que Enora soubesse que é seu pai biológico",
+      de: "Bart möchte, dass Enora erfährt, dass er ihr leiblicher Vater ist"
+    }
+  },
+  {
+    ep: 2188,
+    emoji: "🤝",
+    labels: {
+      en: "Roxara agree: they will tell Enora and will spend more time with Bart",
+      fr: "Roxara se mettent d'accord : elles le diront à Enora et passeront plus de temps avec Bart",
+      es: "Roxara se ponen de acuerdo: se lo dirán a Enora y pasarán más tiempo con Bart",
+      pt: "Roxara combinam: vão contar a Enora e passar mais tempo com Bart",
+      de: "Roxara sind sich einig: Sie werden es Enora sagen und mehr Zeit mit Bart verbringen"
+    }
+  }
+];
+
+/** Optional per-arc synopsis copy (key = `${season}-${arcNum}`). Falls back to `fr` when a locale is missing. */
+const ARC_SYNOPSES = {
+  "6-73": {
+    fr: "Intrigue catastrophe 💥\n\nPour Noël, Roxane offre à Sara un stage de pilotage ; l'avion s'écrase sur la plage de Sète. Sara est gravement blessée et plongée dans le coma. Manon, Jack, Sylvain et d'autres sont blessés sur la plage ; le pilote Jean-Charles Leduc meurt. Georges découvre qu'un drone piraté a fait chuter l'avion — lien avec Psychose · Crash et le passé d'Aurélie Doumergue.\n\nÉpisode par épisode : la maternité est piratée et coupe le courant ; Roxane remonte à Melissa ; Aurore craint qu'on en veuille à Roxane. Roxane somme Melissa de les laisser tranquilles ; Aurore arrive et Melissa s'enfuit. Lisa suspecte Roxane en tant que hacker ; Melissa affiche sur les écrans du commissariat le masque de la peste des vidéos de menace. David revient ; Sara sort du coma. David est entendu au commissariat ; Aurore apprend que Roxane l'avait croisé sans le lui dire — elles se disputent ; le dispositif pour coincer Melissa échoue. Roxane s'ouvre à Bart : elle est Aurélie. Lisa insiste sur Aurélie ; Roxane trouve un brouilleur dans la voiture de Bart et lui raconte tout ; dispute puis réconciliation ; Melissa enlève David ; Aurore évoque un possible test ADN au juge. Sara veut que Roxane fuie ; Roxane préfère avouer ; Melissa pirate les feux et retient David ; Roxane se rend quand même au commissariat ; David arrive blessé, dit avoir tué Aurélie et oriente la version vers Melissa. Son récit détourne l'enquête de Roxane ; Aurore lui dit qu'il est très malade ; Lisa insiste pour l'ADN sur les restes de Melissa ; Aurore demande à Roxane et Sara d'échanger les prélèvements au labo. Le stratagème fonctionne : le profil cadre avec Aurélie, l'affaire est classée ; avec Aurore, Roxane est définitivement hors de danger.",
+    en: "Disaster arc 💥\n\nFor Christmas Roxane gives Sara a flying lesson; the touring plane crashes on the beach at Sète. Sara is badly hurt, in an induced coma. Manon, Jack, Sylvain and others are injured on the beach too; pilot Jean-Charles Leduc dies. Georges learns a hacked drone brought the plane down—tying this to Psychose · Crash and Roxane’s past as Aurélie Doumergue.\n\nEpisode by episode: The maternity unit is hacked and loses power; Roxane traces it to Melissa and Aurore fears Roxane is a target. Roxane tells Melissa to back off; Aurore arrives and Melissa escapes. Lisa suspects Roxane as the hacker; Melissa puts the plague mask from Aurélie’s threat videos on the station screens. David is back in town; Sara wakes from her coma. David is questioned at the station; Aurore learns Roxane saw him without telling her—they argue; the Melissa sting fails. Roxane confesses to Bart that she is Aurélie. Lisa keeps pushing the Aurélie angle; Roxane finds a jammer in Bart’s car and tells him everything; they fight and reconcile; Melissa abducts David; Aurore warns Lisa may seek a court DNA order. Sara wants Roxane to leave the country; Roxane would rather confess; Melissa hacks the traffic lights and holds David; Roxane still goes to the station; a hurt David says he killed Aurélie and pins it on Melissa. His story shifts the case away from Roxane; Aurore tells Roxane he is seriously ill; Lisa still wants DNA from Melissa’s remains; Aurore asks Roxane and Sara to swap the lab samples. The swap works—the profile matches Aurélie, the case is closed, and with Aurore’s help Roxane is safe for good.",
+    es: "Intriga catástrofe 💥\n\nEn Navidad Roxane regala a Sara una clase de vuelo; el avión turístico se estrella en la playa de Sète. Sara queda grave y en coma inducido. Manon, Jack, Sylvain y otros resultan heridos en la playa; muere el piloto Jean-Charles Leduc. Georges descubre que un dron pirateado derribó el avión: vínculo con Psychose · Crash y el pasado de Roxane como Aurélie Doumergue.\n\nEpisodio a episodio: hackean la maternidad y se va la luz; Roxane lo rastrea hasta Melissa; Aurore teme que vayan a por Roxane. Roxane exige a Melissa que las deje en paz; llega Aurore y Melissa escapa. Lisa sospecha de Roxane como hacker; Melissa pone en las pantallas de la comisaría la máscara de la peste de los vídeos amenazantes. David vuelve; Sara despierta del coma. Interrogan a David; Aurore descubre que Roxane lo vio y no se lo dijo—discuten; el plan contra Melissa falla. Roxane le confiesa a Bart que es Aurélie. Lisa sigue con Aurélie; Roxane halla un inhibidor en el coche de Bart y se lo cuenta todo; discuten y reconcilian; Melissa se lleva a David; Aurore avisa de posible ADN judicial. Sara quiere que Roxane huya; Roxane prefiere confesarse; Melissa hackea los semáforos y retiene a David; Roxane va a la comisaría; David llega herido, dice que mató a Aurélie y culpa a Melissa. Su relato aparta la investigación de Roxane; Aurore le dice a Roxane que él está muy enfermo; Lisa sigue pidiendo ADN de los restos de Melissa; Aurore pide intercambiar las muestras del laboratorio. El cambio funciona: el perfil encaja con Aurélie, el caso se archiva; con Aurore, Roxane queda a salvo.",
+    pt: "Intriga catástrofe 💥\n\nNo Natal Roxane oferece a Sara uma aula de voo; o avião turístico cai na praia de Sète. Sara fica gravemente ferida em coma induzido. Manon, Jack, Sylvain e outros ficam feridos na praia; o piloto Jean-Charles Leduc morre. Georges descobre que um drone pirateado derrubou o avião — ligação a Psychose · Crash e ao passado de Roxane como Aurélie Doumergue.\n\nEpisódio a episódio: a maternidade é hackeada e fica sem luz; Roxane segue o rasto até Melissa; Aurore receia que Roxane seja alvo. Roxane manda Melissa afastar-se; Aurore chega e Melissa foge. Lisa suspeita de Roxane como hacker; Melissa exibe nos ecrãs da esquadra a máscara da peste dos vídeos de ameaça. David volta; Sara acorda do coma. David é ouvido; Aurore fica a saber que Roxane o viu sem lhe contar — discutem; a cilada a Melissa falha. Roxane confessa a Bart que é a Aurélie. Lisa insiste na Aurélie; Roxane encontra um jammer no carro de Bart e conta-lhe tudo; discutem e reconciliam; Melissa rapta David; Aurore alerta para possível ADN por ordem judicial. Sara quer que Roxane fuja; Roxane prefere confessar; Melissa hackeia semáforos e retém David; Roxane vai à esquadra; David aparece ferido, diz que matou Aurélie e incrimina Melissa. A versão dele afasta a investigação de Roxane; Aurore diz-lhe que ele está muito doente; Lisa ainda quer ADN dos restos de Melissa; Aurore pede a Roxane e Sara que troquem as amostras no laboratório. A troca resulta: o perfil bate certo com Aurélie, o inquérito encerra-se; com Aurore, Roxane fica a salvo de vez.",
+    de: "Katastrophen-Storyline 💥\n\nZu Weihnachten schenkt Roxane Sara Flugunterricht; das Touristenflugzeug stürzt am Strand von Sète ab. Sara wird schwer verletzt und ins künstliche Koma versetzt. Manon, Jack, Sylvain und weitere werden verletzt; Pilot Jean-Charles Leduc stirbt. Georges erfährt von einer gehackten Drohne, die das Flugzeug zum Absturz brachte — Verbindung zu Psychose · Crash und Roxanes Vergangenheit als Aurélie Doumergue.\n\nEpisode für Episode: Die Geburtsstation wird gehackt, der Strom fällt aus; Roxane führt es auf Melissa; Aurore fürchtet, Roxane könnte ins Visier genommen werden. Roxane mahnt Melissa ab; Aurore kommt und Melissa entkommt. Lisa hält Roxane für die Hackerin; Melissa blendet in der Wache die Pestmaske aus Aurélies Drohvideos ein. David ist zurück; Sara erwacht aus dem Koma. David wird vernommen; Aurore erfährt, dass Roxane ihn gesehen und verschwiegen hat — sie streiten; die Melissa-Falle greift nicht. Roxane gesteht Bart, dass sie Aurélie ist. Lisa bleibt bei Aurélie; Roxane findet einen Störsender in Barts Auto und gesteht alles; Streit und Versöhnung; Melissa entführt David; Aurore warnt vor gerichtlich angeordnetem DNA-Test. Sara will, dass Roxane flieht; Roxane will lieber gestehen; Melissa hackt die Ampeln und hält David fest; Roxane geht zur Wache; ein verletzter David behauptet, Aurélie getötet zu haben, und belastet Melissa. Seine Aussage lenkt von Roxane ab; Aurore sagt Roxane, er sei schwer krank; Lisa will weiter DNA an Melissas Überresten; Aurore bittet Roxane und Sara, die Laborproben zu tauschen. Der Tausch klappt: das Profil passt zu Aurélie, der Fall wird eingestellt — mit Aurores Hilfe ist Roxane endgültig sicher."
+  },
+  "9-124": {
+    fr: "Intrigue catastrophe 💥\n\nSète : séisme. Roxane est retrouvée sous les décombres et hospitalisée en urgence. Dans le coma, nouvelle révélation : le médecin confie à Sara que Roxane a été poignardée.\n\n(Lieu marquant : môle Saint-Louis.)",
+    en: "Disaster arc 💥\n\nSète: earthquake. Roxane is found under the rubble and rushed to hospital. In her coma, another blow: the doctor tells Sara Roxane was stabbed.\n\n(Key location: Môle Saint-Louis.)",
+    es: "Intriga catástrofe 💥\n\nSète: terremoto. Roxane aparece bajo los escombros y la llevan de urgencia al hospital. En coma, llega otra noticia: el médico le dice a Sara que Roxane fue apuñalada.\n\n(Lugar clave: muelle Saint-Louis.)",
+    pt: "Intriga catástrofe 💥\n\nSète: sismo. Roxane é retirada dos escombros e levada de urgência ao hospital. Em coma, nova revelação: o médico diz a Sara que Roxane foi esfaqueada.\n\n(Local marcante: molhe Saint-Louis.)",
+    de: "Katastrophen-Storyline 💥\n\nSète: Erdbeben. Roxane wird unter den Trümmern gefunden und notfallmässig eingeliefert. Im Koma folgt die nächste Erschütterung: Der Arzt teilt Sara mit, Roxane sei erstochen worden.\n\n(Schauplatz: Môle Saint-Louis.)"
+  },
+  "3-33": {
+    fr: "Tandis que la police commence une nouvelle journée de manière totalement banale, un mystérieux individu ouvre le feu sur le commissariat et détruit tout sur son passage. Plusieurs blessés sont à déplorer... Mais alors qu'Aurore et ses collègues vont tout faire pour l'arrêter, cette étrange personne va plonger la ville dans un état de psychose...",
+    en: "While the police begin a new day in a perfectly mundane way, a mysterious individual opens fire on the police station and destroys everything in their path. Several people are injured… But as Aurore and her colleagues do everything they can to stop them, this strange figure plunges the city into mass hysteria…",
+    es: "Mientras la policía comienza una nueva jornada de forma totalmente banal, un individuo misterioso abre fuego contra la comisaría y lo arrasa todo a su paso. Hay varios heridos… Pero cuando Aurore y sus compañeros harán todo lo posible para detenerlo, esa extraña persona sumirá la ciudad en un estado de psicosis…",
+    pt: "Enquanto a polícia começa um novo dia de forma totalmente banal, um indivíduo misterioso dispara contra a esquadra e destrói tudo à sua passagem. Vários feridos… Mas quando Aurore e os colegas fizerem tudo para o deter, essa estranha pessoa mergulhará a cidade num estado de psicose…",
+    de: "Während die Polizei einen neuen Tag völlig banal beginnt, eröffnet eine mysteriöse Person das Feuer auf die Wache und verwüstet alles auf ihrem Weg. Es gibt mehrere Verletzte… Doch während Aurore und ihre Kolleginnen und Kollegen alles tun, um sie aufzuhalten, versetzt diese seltsame Person die Stadt in kollektive Psychose…"
+  }
+};
+
+/** Optional per-episode on-screen appearances within an arc (`true` = coloured cell in source sheet). Key matches ARC_SYNOPSES / arcs. */
+const ARC_EP_APPEARANCES = {
+  "3-32": [
+    { ep: 627, sara: false, roxane: false },
+    { ep: 628, sara: true, roxane: false },
+    { ep: 629, sara: true, roxane: false },
+    { ep: 630, sara: true, roxane: false },
+    { ep: 631, sara: true, roxane: false },
+    { ep: 632, sara: true, roxane: true },
+    { ep: 633, sara: true, roxane: true },
+    { ep: 634, sara: false, roxane: false },
+    { ep: 635, sara: false, roxane: false },
+    { ep: 636, sara: false, roxane: false },
+    { ep: 637, sara: true, roxane: true },
+    { ep: 638, sara: true, roxane: false },
+    { ep: 639, sara: true, roxane: true },
+    { ep: 640, sara: false, roxane: false },
+    { ep: 641, sara: true, roxane: false },
+    { ep: 642, sara: false, roxane: false },
+    { ep: 643, sara: false, roxane: false },
+    { ep: 644, sara: true, roxane: false },
+    { ep: 645, sara: true, roxane: true },
+    { ep: 646, sara: true, roxane: true }
+  ],
+  "3-33": [
+    { ep: 647, sara: true, roxane: true },
+    { ep: 648, sara: true, roxane: true },
+    { ep: 649, sara: true, roxane: true },
+    { ep: 650, sara: true, roxane: true },
+    { ep: 651, sara: false, roxane: true },
+    { ep: 652, sara: true, roxane: false },
+    { ep: 653, sara: true, roxane: true },
+    { ep: 654, sara: false, roxane: false },
+    { ep: 655, sara: false, roxane: false },
+    { ep: 656, sara: true, roxane: true },
+    { ep: 657, sara: true, roxane: true },
+    { ep: 658, sara: true, roxane: true },
+    { ep: 659, sara: true, roxane: true },
+    { ep: 660, sara: true, roxane: true },
+    { ep: 661, sara: true, roxane: true },
+    { ep: 662, sara: true, roxane: true },
+    { ep: 663, sara: true, roxane: true },
+    { ep: 664, sara: true, roxane: true },
+    { ep: 665, sara: true, roxane: true },
+    { ep: 666, sara: true, roxane: true }
+  ],
+  "3-34": [
+    { ep: 667, sara: true, roxane: true },
+    { ep: 668, sara: true, roxane: true },
+    { ep: 669, sara: true, roxane: true },
+    { ep: 670, sara: false, roxane: false },
+    { ep: 671, sara: false, roxane: false },
+    { ep: 672, sara: true, roxane: true },
+    { ep: 673, sara: true, roxane: true },
+    { ep: 674, sara: true, roxane: true },
+    { ep: 675, sara: false, roxane: false },
+    { ep: 676, sara: true, roxane: false },
+    { ep: 677, sara: false, roxane: false },
+    { ep: 678, sara: false, roxane: false },
+    { ep: 679, sara: false, roxane: false },
+    { ep: 680, sara: false, roxane: false },
+    { ep: 681, sara: false, roxane: false },
+    { ep: 682, sara: false, roxane: false },
+    { ep: 683, sara: false, roxane: false },
+    { ep: 684, sara: false, roxane: false },
+    { ep: 685, sara: false, roxane: false },
+    { ep: 686, sara: false, roxane: false }
+  ],
+  "4-37": [
+    { ep: 727, sara: true, roxane: false },
+    { ep: 728, sara: true, roxane: true },
+    { ep: 729, sara: true, roxane: false },
+    { ep: 730, sara: true, roxane: false },
+    { ep: 731, sara: true, roxane: false },
+    { ep: 732, sara: true, roxane: true },
+    { ep: 733, sara: true, roxane: false },
+    { ep: 734, sara: true, roxane: true },
+    { ep: 735, sara: true, roxane: true },
+    { ep: 736, sara: true, roxane: false },
+    { ep: 737, sara: true, roxane: false },
+    { ep: 738, sara: false, roxane: false },
+    { ep: 739, sara: true, roxane: false },
+    { ep: 740, sara: true, roxane: true },
+    { ep: 741, sara: false, roxane: false },
+    { ep: 742, sara: true, roxane: false },
+    { ep: 743, sara: true, roxane: true },
+    { ep: 744, sara: true, roxane: false },
+    { ep: 745, sara: true, roxane: true },
+    { ep: 746, sara: true, roxane: false },
+    { ep: 747, sara: true, roxane: true },
+    { ep: 748, sara: true, roxane: true },
+    { ep: 749, sara: true, roxane: true }
+  ],
+  "4-43": [
+    { ep: 852, sara: true, roxane: true },
+    { ep: 853, sara: false, roxane: true },
+    { ep: 854, sara: false, roxane: true },
+    { ep: 855, sara: false, roxane: false },
+    { ep: 856, sara: false, roxane: false },
+    { ep: 857, sara: false, roxane: false },
+    { ep: 858, sara: false, roxane: false },
+    { ep: 859, sara: false, roxane: false },
+    { ep: 860, sara: false, roxane: false },
+    { ep: 861, sara: false, roxane: false },
+    { ep: 862, sara: false, roxane: false },
+    { ep: 863, sara: false, roxane: false },
+    { ep: 864, sara: false, roxane: false },
+    { ep: 865, sara: false, roxane: false },
+    { ep: 866, sara: false, roxane: false }
+  ],
+  "4-46": [
+    { ep: 897, sara: false, roxane: true },
+    { ep: 898, sara: false, roxane: false },
+    { ep: 899, sara: false, roxane: false },
+    { ep: 900, sara: false, roxane: false },
+    { ep: 901, sara: false, roxane: true },
+    { ep: 902, sara: true, roxane: false },
+    { ep: 903, sara: true, roxane: true },
+    { ep: 904, sara: true, roxane: true },
+    { ep: 905, sara: false, roxane: false },
+    { ep: 906, sara: true, roxane: false },
+    { ep: 907, sara: true, roxane: true },
+    { ep: 908, sara: true, roxane: true },
+    { ep: 909, sara: true, roxane: false },
+    { ep: 910, sara: false, roxane: true },
+    { ep: 911, sara: false, roxane: true }
+  ],
+  "4-47": [
+    { ep: 912, sara: false, roxane: true },
+    { ep: 913, sara: true, roxane: true },
+    { ep: 914, sara: true, roxane: true },
+    { ep: 915, sara: true, roxane: false },
+    { ep: 916, sara: false, roxane: false },
+    { ep: 917, sara: false, roxane: false },
+    { ep: 918, sara: false, roxane: true },
+    { ep: 919, sara: false, roxane: true },
+    { ep: 920, sara: true, roxane: true },
+    { ep: 921, sara: false, roxane: false },
+    { ep: 922, sara: true, roxane: true },
+    { ep: 923, sara: true, roxane: true },
+    { ep: 924, sara: true, roxane: true },
+    { ep: 925, sara: false, roxane: false },
+    { ep: 926, sara: false, roxane: false },
+    { ep: 927, sara: true, roxane: false },
+    { ep: 928, sara: true, roxane: false },
+    { ep: 929, sara: true, roxane: true },
+    { ep: 930, sara: true, roxane: true },
+    { ep: 931, sara: true, roxane: false },
+    { ep: 932, sara: true, roxane: true },
+    { ep: 933, sara: true, roxane: true },
+    { ep: 934, sara: false, roxane: false },
+    { ep: 935, sara: false, roxane: false },
+    { ep: 936, sara: false, roxane: false }
+  ],
+  "4-49": [
+    { ep: 947, sara: false, roxane: false },
+    { ep: 948, sara: true, roxane: false },
+    { ep: 949, sara: false, roxane: false },
+    { ep: 950, sara: true, roxane: false },
+    { ep: 951, sara: true, roxane: false },
+    { ep: 952, sara: true, roxane: false },
+    { ep: 953, sara: false, roxane: false },
+    { ep: 954, sara: false, roxane: false },
+    { ep: 955, sara: true, roxane: false },
+    { ep: 956, sara: false, roxane: false },
+    { ep: 957, sara: false, roxane: false },
+    { ep: 958, sara: false, roxane: false },
+    { ep: 959, sara: true, roxane: false },
+    { ep: 960, sara: true, roxane: false },
+    { ep: 961, sara: true, roxane: false },
+    { ep: 962, sara: false, roxane: false },
+    { ep: 963, sara: false, roxane: false },
+    { ep: 964, sara: true, roxane: false },
+    { ep: 965, sara: true, roxane: false },
+    { ep: 966, sara: true, roxane: false },
+    { ep: 967, sara: false, roxane: false },
+    { ep: 968, sara: false, roxane: false }
+  ],
+  "4-50": [
+    { ep: 969, sara: true, roxane: false },
+    { ep: 970, sara: true, roxane: false },
+    { ep: 971, sara: true, roxane: false },
+    { ep: 972, sara: false, roxane: false },
+    { ep: 973, sara: true, roxane: false },
+    { ep: 974, sara: true, roxane: false },
+    { ep: 975, sara: true, roxane: false },
+    { ep: 976, sara: true, roxane: false },
+    { ep: 977, sara: true, roxane: false },
+    { ep: 978, sara: true, roxane: false },
+    { ep: 979, sara: true, roxane: false },
+    { ep: 980, sara: true, roxane: false },
+    { ep: 981, sara: false, roxane: false },
+    { ep: 982, sara: true, roxane: false },
+    { ep: 983, sara: true, roxane: false },
+    { ep: 984, sara: false, roxane: false },
+    { ep: 985, sara: false, roxane: false },
+    { ep: 986, sara: true, roxane: false },
+    { ep: 987, sara: true, roxane: false },
+    { ep: 988, sara: true, roxane: false },
+    { ep: 989, sara: false, roxane: false },
+    { ep: 990, sara: false, roxane: false },
+    { ep: 991, sara: false, roxane: false }
+  ],
+  "5-51": [
+    { ep: 992, sara: true, roxane: true },
+    { ep: 993, sara: true, roxane: false },
+    { ep: 994, sara: false, roxane: false },
+    { ep: 995, sara: true, roxane: false },
+    { ep: 996, sara: true, roxane: true },
+    { ep: 997, sara: false, roxane: false },
+    { ep: 998, sara: true, roxane: true },
+    { ep: 999, sara: false, roxane: false },
+    { ep: 1000, sara: false, roxane: false },
+    { ep: 1001, sara: true, roxane: true }
+  ],
+  "5-52": [
+    { ep: 1002, sara: false, roxane: false },
+    { ep: 1003, sara: false, roxane: false },
+    { ep: 1004, sara: false, roxane: false },
+    { ep: 1005, sara: false, roxane: false },
+    { ep: 1006, sara: false, roxane: false },
+    { ep: 1007, sara: false, roxane: true },
+    { ep: 1008, sara: false, roxane: false },
+    { ep: 1009, sara: false, roxane: false },
+    { ep: 1010, sara: false, roxane: false },
+    { ep: 1011, sara: false, roxane: false },
+    { ep: 1012, sara: false, roxane: false },
+    { ep: 1013, sara: true, roxane: true },
+    { ep: 1014, sara: true, roxane: false },
+    { ep: 1015, sara: true, roxane: true },
+    { ep: 1016, sara: true, roxane: false },
+    { ep: 1017, sara: false, roxane: false },
+    { ep: 1018, sara: false, roxane: false },
+    { ep: 1019, sara: false, roxane: false },
+    { ep: 1020, sara: true, roxane: false },
+    { ep: 1021, sara: false, roxane: false }
+  ],
+  "5-53": [
+    { ep: 1022, sara: false, roxane: false },
+    { ep: 1023, sara: false, roxane: false },
+    { ep: 1024, sara: false, roxane: false },
+    { ep: 1025, sara: false, roxane: false },
+    { ep: 1026, sara: false, roxane: false },
+    { ep: 1027, sara: true, roxane: true },
+    { ep: 1028, sara: false, roxane: false },
+    { ep: 1029, sara: true, roxane: true },
+    { ep: 1030, sara: true, roxane: true },
+    { ep: 1031, sara: true, roxane: true },
+    { ep: 1032, sara: true, roxane: true },
+    { ep: 1033, sara: true, roxane: true },
+    { ep: 1034, sara: true, roxane: true },
+    { ep: 1035, sara: true, roxane: true },
+    { ep: 1036, sara: true, roxane: true },
+    { ep: 1037, sara: true, roxane: true },
+    { ep: 1038, sara: true, roxane: true },
+    { ep: 1039, sara: true, roxane: true },
+    { ep: 1040, sara: true, roxane: true },
+    { ep: 1041, sara: true, roxane: true }
+  ],
+  "5-54": [
+    { ep: 1042, sara: false, roxane: false },
+    { ep: 1043, sara: true, roxane: true },
+    { ep: 1044, sara: true, roxane: true },
+    { ep: 1045, sara: true, roxane: false },
+    { ep: 1046, sara: true, roxane: false },
+    { ep: 1047, sara: false, roxane: false },
+    { ep: 1048, sara: false, roxane: true },
+    { ep: 1049, sara: false, roxane: false },
+    { ep: 1050, sara: true, roxane: true },
+    { ep: 1051, sara: false, roxane: false },
+    { ep: 1052, sara: false, roxane: false },
+    { ep: 1053, sara: false, roxane: false },
+    { ep: 1054, sara: false, roxane: false }
+  ],
+  "5-56": [
+    { ep: 1072, sara: true, roxane: false },
+    { ep: 1073, sara: true, roxane: true },
+    { ep: 1074, sara: true, roxane: true },
+    { ep: 1075, sara: true, roxane: true },
+    { ep: 1076, sara: false, roxane: false },
+    { ep: 1077, sara: true, roxane: true },
+    { ep: 1078, sara: false, roxane: true },
+    { ep: 1079, sara: false, roxane: true },
+    { ep: 1080, sara: true, roxane: true },
+    { ep: 1081, sara: true, roxane: true },
+    { ep: 1082, sara: true, roxane: true },
+    { ep: 1083, sara: true, roxane: true },
+    { ep: 1084, sara: true, roxane: true },
+    { ep: 1085, sara: true, roxane: true },
+    { ep: 1086, sara: false, roxane: true }
+  ],
+  "5-57": [
+    { ep: 1087, sara: true, roxane: true },
+    { ep: 1088, sara: false, roxane: false },
+    { ep: 1089, sara: true, roxane: true },
+    { ep: 1090, sara: true, roxane: true },
+    { ep: 1091, sara: true, roxane: false },
+    { ep: 1092, sara: true, roxane: false },
+    { ep: 1093, sara: true, roxane: false },
+    { ep: 1094, sara: true, roxane: false },
+    { ep: 1095, sara: true, roxane: false },
+    { ep: 1096, sara: false, roxane: false },
+    { ep: 1097, sara: true, roxane: false },
+    { ep: 1098, sara: true, roxane: false },
+    { ep: 1099, sara: true, roxane: true },
+    { ep: 1100, sara: true, roxane: true },
+    { ep: 1101, sara: true, roxane: true },
+    { ep: 1102, sara: false, roxane: true },
+    { ep: 1103, sara: true, roxane: true },
+    { ep: 1104, sara: true, roxane: true }
+  ],
+  "5-58": [
+    { ep: 1105, sara: false, roxane: false },
+    { ep: 1106, sara: false, roxane: false },
+    { ep: 1107, sara: true, roxane: false },
+    { ep: 1108, sara: true, roxane: true },
+    { ep: 1109, sara: false, roxane: false },
+    { ep: 1110, sara: true, roxane: false },
+    { ep: 1111, sara: false, roxane: false },
+    { ep: 1112, sara: false, roxane: true },
+    { ep: 1113, sara: false, roxane: false },
+    { ep: 1114, sara: false, roxane: true },
+    { ep: 1115, sara: false, roxane: false },
+    { ep: 1116, sara: false, roxane: true },
+    { ep: 1117, sara: true, roxane: false },
+    { ep: 1118, sara: true, roxane: true },
+    { ep: 1119, sara: true, roxane: true },
+    { ep: 1120, sara: true, roxane: true },
+    { ep: 1121, sara: false, roxane: false }
+  ],
+  "5-60": [
+    { ep: 1132, sara: false, roxane: false },
+    { ep: 1133, sara: false, roxane: false },
+    { ep: 1134, sara: false, roxane: false },
+    { ep: 1135, sara: false, roxane: false },
+    { ep: 1136, sara: false, roxane: false },
+    { ep: 1137, sara: false, roxane: false },
+    { ep: 1138, sara: true, roxane: true },
+    { ep: 1139, sara: false, roxane: false },
+    { ep: 1140, sara: true, roxane: false },
+    { ep: 1141, sara: false, roxane: false },
+    { ep: 1142, sara: true, roxane: false },
+    { ep: 1143, sara: true, roxane: true },
+    { ep: 1144, sara: true, roxane: true },
+    { ep: 1145, sara: false, roxane: false },
+    { ep: 1146, sara: false, roxane: false }
+  ],
+  "5-61": [
+    { ep: 1147, sara: false, roxane: false },
+    { ep: 1148, sara: true, roxane: true },
+    { ep: 1149, sara: true, roxane: false },
+    { ep: 1150, sara: true, roxane: true },
+    { ep: 1151, sara: true, roxane: false },
+    { ep: 1152, sara: true, roxane: false },
+    { ep: 1153, sara: true, roxane: true },
+    { ep: 1154, sara: true, roxane: true },
+    { ep: 1155, sara: true, roxane: true },
+    { ep: 1156, sara: true, roxane: true },
+    { ep: 1157, sara: true, roxane: false },
+    { ep: 1158, sara: true, roxane: false },
+    { ep: 1159, sara: true, roxane: false },
+    { ep: 1160, sara: true, roxane: false },
+    { ep: 1161, sara: false, roxane: false },
+    { ep: 1162, sara: true, roxane: true },
+    { ep: 1163, sara: true, roxane: false }
+  ],
+  "5-62": [
+    { ep: 1164, sara: true, roxane: true },
+    { ep: 1165, sara: true, roxane: true },
+    { ep: 1166, sara: false, roxane: true },
+    { ep: 1167, sara: false, roxane: true },
+    { ep: 1168, sara: true, roxane: true },
+    { ep: 1169, sara: false, roxane: true },
+    { ep: 1170, sara: false, roxane: false },
+    { ep: 1171, sara: true, roxane: true },
+    { ep: 1172, sara: false, roxane: true },
+    { ep: 1173, sara: false, roxane: false },
+    { ep: 1174, sara: false, roxane: false },
+    { ep: 1175, sara: false, roxane: false },
+    { ep: 1176, sara: false, roxane: false }
+  ],
+  "5-63": [
+    { ep: 1177, sara: true, roxane: false },
+    { ep: 1178, sara: true, roxane: true },
+    { ep: 1179, sara: true, roxane: true },
+    { ep: 1180, sara: true, roxane: false },
+    { ep: 1181, sara: true, roxane: true },
+    { ep: 1182, sara: true, roxane: false },
+    { ep: 1183, sara: false, roxane: true },
+    { ep: 1184, sara: true, roxane: false },
+    { ep: 1185, sara: true, roxane: true },
+    { ep: 1186, sara: false, roxane: false },
+    { ep: 1187, sara: true, roxane: false },
+    { ep: 1188, sara: false, roxane: true },
+    { ep: 1189, sara: true, roxane: true },
+    { ep: 1190, sara: true, roxane: false },
+    { ep: 1191, sara: true, roxane: true },
+    { ep: 1192, sara: true, roxane: true },
+    { ep: 1193, sara: true, roxane: true },
+    { ep: 1194, sara: false, roxane: true },
+    { ep: 1195, sara: true, roxane: true },
+    { ep: 1196, sara: false, roxane: false }
+  ],
+  "5-64": [
+    { ep: 1197, sara: true, roxane: false },
+    { ep: 1198, sara: true, roxane: true },
+    { ep: 1199, sara: true, roxane: true },
+    { ep: 1200, sara: true, roxane: true },
+    { ep: 1201, sara: true, roxane: false },
+    { ep: 1202, sara: true, roxane: true },
+    { ep: 1203, sara: true, roxane: true },
+    { ep: 1204, sara: true, roxane: false },
+    { ep: 1205, sara: false, roxane: false },
+    { ep: 1206, sara: true, roxane: true },
+    { ep: 1207, sara: true, roxane: true },
+    { ep: 1208, sara: false, roxane: false },
+    { ep: 1209, sara: true, roxane: true },
+    { ep: 1210, sara: true, roxane: false },
+    { ep: 1211, sara: true, roxane: true },
+    { ep: 1212, sara: false, roxane: true },
+    { ep: 1213, sara: false, roxane: true },
+    { ep: 1214, sara: false, roxane: true },
+    { ep: 1215, sara: false, roxane: false },
+    { ep: 1216, sara: false, roxane: false }
+  ],
+  "5-65": [
+    { ep: 1217, sara: false, roxane: false },
+    { ep: 1218, sara: false, roxane: false },
+    { ep: 1219, sara: false, roxane: true },
+    { ep: 1220, sara: false, roxane: false },
+    { ep: 1221, sara: false, roxane: false },
+    { ep: 1222, sara: true, roxane: true },
+    { ep: 1223, sara: true, roxane: false },
+    { ep: 1224, sara: false, roxane: false },
+    { ep: 1225, sara: false, roxane: false },
+    { ep: 1226, sara: false, roxane: false },
+    { ep: 1227, sara: false, roxane: true },
+    { ep: 1228, sara: true, roxane: true },
+    { ep: 1229, sara: true, roxane: false },
+    { ep: 1230, sara: true, roxane: false },
+    { ep: 1231, sara: true, roxane: true },
+    { ep: 1232, sara: true, roxane: true },
+    { ep: 1233, sara: false, roxane: false },
+    { ep: 1234, sara: true, roxane: true }
+  ],
+  "5-66": [
+    { ep: 1235, sara: false, roxane: true },
+    { ep: 1236, sara: false, roxane: true },
+    { ep: 1237, sara: false, roxane: false },
+    { ep: 1238, sara: false, roxane: false },
+    { ep: 1239, sara: true, roxane: false },
+    { ep: 1240, sara: false, roxane: true },
+    { ep: 1241, sara: true, roxane: true },
+    { ep: 1242, sara: false, roxane: true },
+    { ep: 1243, sara: true, roxane: true },
+    { ep: 1244, sara: true, roxane: true },
+    { ep: 1245, sara: true, roxane: true },
+    { ep: 1246, sara: false, roxane: false },
+    { ep: 1247, sara: false, roxane: false },
+    { ep: 1248, sara: true, roxane: true },
+    { ep: 1249, sara: true, roxane: true },
+    { ep: 1250, sara: true, roxane: false },
+    { ep: 1251, sara: false, roxane: false },
+    { ep: 1252, sara: true, roxane: false }
+  ],
+  "5-67": [
+    { ep: 1253, sara: true, roxane: false },
+    { ep: 1254, sara: true, roxane: false },
+    { ep: 1255, sara: true, roxane: true },
+    { ep: 1256, sara: false, roxane: false },
+    { ep: 1257, sara: true, roxane: false },
+    { ep: 1258, sara: false, roxane: false },
+    { ep: 1259, sara: true, roxane: false },
+    { ep: 1260, sara: true, roxane: false },
+    { ep: 1261, sara: false, roxane: false }
+  ],
+  "6-71": [
+    { ep: 1313, sara: false, roxane: false },
+    { ep: 1314, sara: false, roxane: false },
+    { ep: 1315, sara: true, roxane: true },
+    { ep: 1316, sara: true, roxane: true },
+    { ep: 1317, sara: false, roxane: false },
+    { ep: 1318, sara: false, roxane: false },
+    { ep: 1319, sara: true, roxane: false },
+    { ep: 1320, sara: true, roxane: true }
+  ],
+  "6-72": [
+    { ep: 1321, sara: true, roxane: false },
+    { ep: 1322, sara: false, roxane: true },
+    { ep: 1323, sara: true, roxane: true },
+    { ep: 1324, sara: true, roxane: true },
+    { ep: 1325, sara: false, roxane: false },
+    { ep: 1326, sara: false, roxane: false },
+    { ep: 1327, sara: false, roxane: false },
+    { ep: 1328, sara: true, roxane: true },
+    { ep: 1329, sara: false, roxane: true },
+    { ep: 1330, sara: true, roxane: true },
+    { ep: 1331, sara: false, roxane: true },
+    { ep: 1332, sara: true, roxane: true }
+  ],
+  "6-73": [
+    { ep: 1333, sara: true, roxane: true },
+    { ep: 1334, sara: false, roxane: true },
+    { ep: 1335, sara: true, roxane: true },
+    { ep: 1336, sara: true, roxane: true },
+    { ep: 1337, sara: true, roxane: true },
+    { ep: 1338, sara: true, roxane: true },
+    { ep: 1339, sara: false, roxane: true },
+    { ep: 1340, sara: true, roxane: true },
+    { ep: 1341, sara: true, roxane: true },
+    { ep: 1342, sara: false, roxane: true },
+    { ep: 1343, sara: true, roxane: true },
+    { ep: 1344, sara: true, roxane: true },
+    { ep: 1345, sara: true, roxane: true }
+  ],
+  "6-74": [
+    { ep: 1346, sara: true, roxane: true },
+    { ep: 1347, sara: true, roxane: true },
+    { ep: 1348, sara: true, roxane: true },
+    { ep: 1349, sara: false, roxane: true },
+    { ep: 1350, sara: true, roxane: true },
+    { ep: 1351, sara: false, roxane: false },
+    { ep: 1352, sara: false, roxane: false },
+    { ep: 1353, sara: false, roxane: false },
+    { ep: 1354, sara: true, roxane: true },
+    { ep: 1355, sara: true, roxane: true },
+    { ep: 1356, sara: false, roxane: false },
+    { ep: 1357, sara: false, roxane: false },
+    { ep: 1358, sara: false, roxane: false },
+    { ep: 1359, sara: false, roxane: true },
+    { ep: 1360, sara: true, roxane: true }
+  ],
+  "6-76": [
+    { ep: 1381, sara: true, roxane: true },
+    { ep: 1382, sara: true, roxane: true },
+    { ep: 1383, sara: true, roxane: true },
+    { ep: 1384, sara: true, roxane: true },
+    { ep: 1385, sara: true, roxane: false },
+    { ep: 1386, sara: true, roxane: false },
+    { ep: 1387, sara: true, roxane: false },
+    { ep: 1388, sara: true, roxane: false },
+    { ep: 1389, sara: true, roxane: false },
+    { ep: 1390, sara: true, roxane: false },
+    { ep: 1391, sara: true, roxane: false },
+    { ep: 1392, sara: true, roxane: false },
+    { ep: 1393, sara: true, roxane: false },
+    { ep: 1394, sara: true, roxane: false },
+    { ep: 1395, sara: true, roxane: false }
+  ],
+  "6-78": [
+    { ep: 1408, sara: true, roxane: false },
+    { ep: 1409, sara: true, roxane: false },
+    { ep: 1410, sara: true, roxane: false },
+    { ep: 1411, sara: true, roxane: true },
+    { ep: 1412, sara: true, roxane: false },
+    { ep: 1413, sara: true, roxane: false },
+    { ep: 1414, sara: true, roxane: false },
+    { ep: 1415, sara: true, roxane: false }
+  ],
+  "6-79": [
+    { ep: 1416, sara: true, roxane: false },
+    { ep: 1417, sara: true, roxane: false },
+    { ep: 1418, sara: true, roxane: false },
+    { ep: 1419, sara: true, roxane: true },
+    { ep: 1420, sara: true, roxane: true },
+    { ep: 1421, sara: true, roxane: false },
+    { ep: 1422, sara: true, roxane: false },
+    { ep: 1423, sara: true, roxane: true },
+    { ep: 1424, sara: true, roxane: true },
+    { ep: 1425, sara: false, roxane: false },
+    { ep: 1426, sara: false, roxane: false },
+    { ep: 1427, sara: true, roxane: true },
+    { ep: 1428, sara: true, roxane: false },
+    { ep: 1429, sara: false, roxane: false },
+    { ep: 1430, sara: true, roxane: true }
+  ],
+  "6-80": [
+    { ep: 1431, sara: false, roxane: false },
+    { ep: 1432, sara: true, roxane: false },
+    { ep: 1433, sara: true, roxane: true },
+    { ep: 1434, sara: false, roxane: false },
+    { ep: 1435, sara: true, roxane: true },
+    { ep: 1436, sara: true, roxane: false },
+    { ep: 1437, sara: true, roxane: true },
+    { ep: 1438, sara: true, roxane: false },
+    { ep: 1439, sara: true, roxane: true },
+    { ep: 1440, sara: false, roxane: false },
+    { ep: 1441, sara: true, roxane: false },
+    { ep: 1442, sara: true, roxane: false },
+    { ep: 1443, sara: false, roxane: false },
+    { ep: 1444, sara: false, roxane: false },
+    { ep: 1445, sara: false, roxane: false }
+  ],
+  "6-81": [
+    { ep: 1446, sara: true, roxane: true },
+    { ep: 1447, sara: true, roxane: true },
+    { ep: 1448, sara: true, roxane: true },
+    { ep: 1449, sara: false, roxane: false },
+    { ep: 1450, sara: true, roxane: true },
+    { ep: 1451, sara: false, roxane: true },
+    { ep: 1452, sara: true, roxane: true },
+    { ep: 1453, sara: true, roxane: true },
+    { ep: 1454, sara: false, roxane: false },
+    { ep: 1455, sara: true, roxane: false },
+    { ep: 1456, sara: false, roxane: true },
+    { ep: 1457, sara: false, roxane: true },
+    { ep: 1458, sara: true, roxane: true },
+    { ep: 1459, sara: true, roxane: true },
+    { ep: 1460, sara: false, roxane: false }
+  ],
+  "6-82": [
+    { ep: 1461, sara: false, roxane: false },
+    { ep: 1462, sara: false, roxane: false },
+    { ep: 1463, sara: false, roxane: false },
+    { ep: 1464, sara: false, roxane: false },
+    { ep: 1465, sara: false, roxane: false },
+    { ep: 1466, sara: true, roxane: true },
+    { ep: 1467, sara: true, roxane: true },
+    { ep: 1468, sara: true, roxane: true },
+    { ep: 1469, sara: true, roxane: true },
+    { ep: 1470, sara: true, roxane: true },
+    { ep: 1471, sara: true, roxane: true }
+  ],
+  "6-83": [
+    { ep: 1472, sara: true, roxane: true },
+    { ep: 1473, sara: true, roxane: true },
+    { ep: 1474, sara: true, roxane: true },
+    { ep: 1475, sara: true, roxane: true },
+    { ep: 1476, sara: true, roxane: true },
+    { ep: 1477, sara: true, roxane: true },
+    { ep: 1478, sara: true, roxane: true },
+    { ep: 1479, sara: true, roxane: true },
+    { ep: 1480, sara: true, roxane: true },
+    { ep: 1481, sara: true, roxane: true },
+    { ep: 1482, sara: true, roxane: true },
+    { ep: 1483, sara: true, roxane: true },
+    { ep: 1484, sara: true, roxane: true },
+    { ep: 1485, sara: true, roxane: true },
+    { ep: 1486, sara: true, roxane: true },
+    { ep: 1487, sara: true, roxane: true },
+    { ep: 1488, sara: true, roxane: true },
+    { ep: 1489, sara: true, roxane: true },
+    { ep: 1490, sara: true, roxane: true },
+    { ep: 1491, sara: true, roxane: true },
+    { ep: 1492, sara: true, roxane: true },
+    { ep: 1493, sara: true, roxane: true },
+    { ep: 1494, sara: true, roxane: true },
+    { ep: 1495, sara: true, roxane: true }
+  ],
+  "7-84": [
+    { ep: 1496, sara: false, roxane: false },
+    { ep: 1497, sara: false, roxane: false },
+    { ep: 1498, sara: false, roxane: false },
+    { ep: 1499, sara: false, roxane: false },
+    { ep: 1500, sara: false, roxane: false },
+    { ep: 1501, sara: false, roxane: false },
+    { ep: 1502, sara: false, roxane: false },
+    { ep: 1503, sara: false, roxane: false },
+    { ep: 1504, sara: true, roxane: true },
+    { ep: 1505, sara: true, roxane: true },
+    { ep: 1506, sara: false, roxane: false },
+    { ep: 1507, sara: false, roxane: false }
+  ],
+  "7-86": [
+    { ep: 1521, sara: true, roxane: true },
+    { ep: 1522, sara: true, roxane: false },
+    { ep: 1523, sara: true, roxane: true },
+    { ep: 1524, sara: true, roxane: true },
+    { ep: 1525, sara: true, roxane: true },
+    { ep: 1526, sara: true, roxane: true },
+    { ep: 1527, sara: true, roxane: true },
+    { ep: 1528, sara: false, roxane: true },
+    { ep: 1529, sara: true, roxane: true },
+    { ep: 1530, sara: true, roxane: false },
+    { ep: 1531, sara: true, roxane: true },
+    { ep: 1532, sara: true, roxane: false },
+    { ep: 1533, sara: false, roxane: false },
+    { ep: 1534, sara: false, roxane: false },
+    { ep: 1535, sara: true, roxane: false }
+  ],
+  "7-87": [
+    { ep: 1536, sara: true, roxane: true },
+    { ep: 1537, sara: true, roxane: true },
+    { ep: 1538, sara: true, roxane: true },
+    { ep: 1539, sara: true, roxane: true },
+    { ep: 1540, sara: true, roxane: true },
+    { ep: 1541, sara: false, roxane: true },
+    { ep: 1542, sara: false, roxane: true },
+    { ep: 1543, sara: false, roxane: true },
+    { ep: 1544, sara: false, roxane: true },
+    { ep: 1545, sara: false, roxane: true },
+    { ep: 1546, sara: false, roxane: true },
+    { ep: 1547, sara: false, roxane: true }
+  ],
+  "7-88": [
+    { ep: 1548, sara: false, roxane: true },
+    { ep: 1549, sara: false, roxane: false },
+    { ep: 1550, sara: false, roxane: true },
+    { ep: 1551, sara: false, roxane: true },
+    { ep: 1552, sara: true, roxane: false },
+    { ep: 1553, sara: false, roxane: true },
+    { ep: 1554, sara: true, roxane: true },
+    { ep: 1555, sara: true, roxane: true },
+    { ep: 1556, sara: false, roxane: true },
+    { ep: 1557, sara: false, roxane: true },
+    { ep: 1558, sara: false, roxane: true },
+    { ep: 1559, sara: false, roxane: true },
+    { ep: 1560, sara: false, roxane: true }
+  ],
+  "7-89": [
+    { ep: 1561, sara: true, roxane: true },
+    { ep: 1562, sara: false, roxane: true },
+    { ep: 1563, sara: true, roxane: true },
+    { ep: 1564, sara: true, roxane: true },
+    { ep: 1565, sara: true, roxane: false },
+    { ep: 1566, sara: true, roxane: true },
+    { ep: 1567, sara: true, roxane: true },
+    { ep: 1568, sara: true, roxane: true }
+  ],
+  "7-90": [
+    { ep: 1569, sara: false, roxane: false },
+    { ep: 1570, sara: false, roxane: false },
+    { ep: 1571, sara: true, roxane: true },
+    { ep: 1572, sara: true, roxane: true },
+    { ep: 1573, sara: true, roxane: true },
+    { ep: 1574, sara: true, roxane: true },
+    { ep: 1575, sara: false, roxane: true },
+    { ep: 1576, sara: false, roxane: false },
+    { ep: 1577, sara: true, roxane: false },
+    { ep: 1578, sara: true, roxane: true },
+    { ep: 1579, sara: true, roxane: false },
+    { ep: 1580, sara: true, roxane: true },
+    { ep: 1581, sara: true, roxane: true },
+    { ep: 1582, sara: true, roxane: true },
+    { ep: 1583, sara: true, roxane: true }
+  ],
+  "7-91": [
+    { ep: 1584, sara: true, roxane: true },
+    { ep: 1585, sara: true, roxane: true },
+    { ep: 1586, sara: true, roxane: false },
+    { ep: 1587, sara: true, roxane: true },
+    { ep: 1588, sara: true, roxane: true },
+    { ep: 1589, sara: true, roxane: false },
+    { ep: 1590, sara: false, roxane: false },
+    { ep: 1591, sara: false, roxane: false },
+    { ep: 1592, sara: false, roxane: false },
+    { ep: 1593, sara: false, roxane: false },
+    { ep: 1594, sara: true, roxane: true },
+    { ep: 1595, sara: true, roxane: true },
+    { ep: 1596, sara: true, roxane: true },
+    { ep: 1597, sara: true, roxane: true },
+    { ep: 1598, sara: false, roxane: false }
+  ],
+  "7-93": [
+    { ep: 1613, sara: false, roxane: true },
+    { ep: 1614, sara: false, roxane: true },
+    { ep: 1615, sara: false, roxane: true },
+    { ep: 1616, sara: true, roxane: true },
+    { ep: 1617, sara: false, roxane: true },
+    { ep: 1618, sara: false, roxane: false },
+    { ep: 1619, sara: true, roxane: false },
+    { ep: 1620, sara: true, roxane: true },
+    { ep: 1621, sara: true, roxane: true },
+    { ep: 1622, sara: true, roxane: true },
+    { ep: 1623, sara: true, roxane: true },
+    { ep: 1624, sara: true, roxane: true },
+    { ep: 1625, sara: true, roxane: true },
+    { ep: 1626, sara: true, roxane: true },
+    { ep: 1627, sara: true, roxane: true },
+    { ep: 1628, sara: true, roxane: true }
+  ],
+  "7-94": [
+    { ep: 1629, sara: true, roxane: true },
+    { ep: 1630, sara: false, roxane: false },
+    { ep: 1631, sara: false, roxane: false },
+    { ep: 1632, sara: false, roxane: true },
+    { ep: 1633, sara: false, roxane: true },
+    { ep: 1634, sara: false, roxane: true },
+    { ep: 1635, sara: false, roxane: true },
+    { ep: 1636, sara: true, roxane: true },
+    { ep: 1637, sara: true, roxane: true },
+    { ep: 1638, sara: true, roxane: true },
+    { ep: 1639, sara: false, roxane: true },
+    { ep: 1640, sara: true, roxane: true },
+    { ep: 1641, sara: true, roxane: true },
+    { ep: 1642, sara: true, roxane: true }
+  ],
+  "7-95": [
+    { ep: 1643, sara: false, roxane: false },
+    { ep: 1644, sara: true, roxane: true },
+    { ep: 1645, sara: true, roxane: false },
+    { ep: 1646, sara: true, roxane: false },
+    { ep: 1647, sara: true, roxane: true },
+    { ep: 1648, sara: true, roxane: true },
+    { ep: 1649, sara: false, roxane: false },
+    { ep: 1650, sara: true, roxane: false },
+    { ep: 1651, sara: true, roxane: true }
+  ],
+  "7-96": [
+    { ep: 1652, sara: true, roxane: false },
+    { ep: 1653, sara: false, roxane: false },
+    { ep: 1654, sara: true, roxane: true },
+    { ep: 1655, sara: true, roxane: true },
+    { ep: 1656, sara: true, roxane: true },
+    { ep: 1657, sara: false, roxane: false },
+    { ep: 1658, sara: false, roxane: true },
+    { ep: 1659, sara: true, roxane: true },
+    { ep: 1660, sara: true, roxane: true },
+    { ep: 1661, sara: false, roxane: false },
+    { ep: 1662, sara: false, roxane: false },
+    { ep: 1663, sara: true, roxane: true },
+    { ep: 1664, sara: true, roxane: true },
+    { ep: 1665, sara: true, roxane: true }
+  ],
+  "7-97": [
+    { ep: 1666, sara: true, roxane: false },
+    { ep: 1667, sara: true, roxane: true },
+    { ep: 1668, sara: true, roxane: true },
+    { ep: 1669, sara: true, roxane: true },
+    { ep: 1670, sara: true, roxane: false },
+    { ep: 1671, sara: true, roxane: true },
+    { ep: 1672, sara: true, roxane: true },
+    { ep: 1673, sara: true, roxane: true },
+    { ep: 1674, sara: true, roxane: false },
+    { ep: 1675, sara: true, roxane: true },
+    { ep: 1676, sara: true, roxane: true }
+  ],
+  "7-98": [
+    { ep: 1677, sara: true, roxane: true },
+    { ep: 1678, sara: false, roxane: true },
+    { ep: 1679, sara: false, roxane: false },
+    { ep: 1680, sara: true, roxane: false },
+    { ep: 1681, sara: true, roxane: true },
+    { ep: 1682, sara: true, roxane: true },
+    { ep: 1683, sara: false, roxane: true },
+    { ep: 1684, sara: true, roxane: true },
+    { ep: 1685, sara: false, roxane: false },
+    { ep: 1686, sara: false, roxane: false },
+    { ep: 1687, sara: false, roxane: true },
+    { ep: 1688, sara: false, roxane: true },
+    { ep: 1689, sara: false, roxane: false },
+    { ep: 1690, sara: false, roxane: false }
+  ],
+  "7-100": [
+    { ep: 1701, sara: false, roxane: false },
+    { ep: 1702, sara: true, roxane: true },
+    { ep: 1703, sara: true, roxane: true },
+    { ep: 1704, sara: true, roxane: true },
+    { ep: 1705, sara: true, roxane: false },
+    { ep: 1706, sara: true, roxane: false },
+    { ep: 1707, sara: true, roxane: false },
+    { ep: 1708, sara: true, roxane: true },
+    { ep: 1709, sara: true, roxane: true },
+    { ep: 1710, sara: false, roxane: false },
+    { ep: 1711, sara: true, roxane: true },
+    { ep: 1712, sara: true, roxane: true },
+    { ep: 1713, sara: true, roxane: false }
+  ],
+  "7-101": [
+    { ep: 1714, sara: true, roxane: true },
+    { ep: 1715, sara: true, roxane: false },
+    { ep: 1716, sara: true, roxane: true },
+    { ep: 1717, sara: true, roxane: false },
+    { ep: 1718, sara: true, roxane: true },
+    { ep: 1719, sara: true, roxane: false },
+    { ep: 1720, sara: false, roxane: true },
+    { ep: 1721, sara: false, roxane: true },
+    { ep: 1722, sara: true, roxane: true },
+    { ep: 1723, sara: false, roxane: true }
+  ],
+  "7-102": [
+    { ep: 1724, sara: true, roxane: true },
+    { ep: 1725, sara: true, roxane: true },
+    { ep: 1726, sara: true, roxane: true },
+    { ep: 1727, sara: true, roxane: true },
+    { ep: 1728, sara: true, roxane: true },
+    { ep: 1729, sara: true, roxane: true },
+    { ep: 1730, sara: true, roxane: true },
+    { ep: 1731, sara: true, roxane: true },
+    { ep: 1732, sara: false, roxane: true },
+    { ep: 1733, sara: true, roxane: true },
+    { ep: 1734, sara: true, roxane: true },
+    { ep: 1735, sara: true, roxane: true },
+    { ep: 1736, sara: true, roxane: true }
+  ],
+  "7-103": [
+    { ep: 1737, sara: true, roxane: true },
+    { ep: 1738, sara: true, roxane: true },
+    { ep: 1739, sara: true, roxane: true },
+    { ep: 1740, sara: false, roxane: true },
+    { ep: 1741, sara: false, roxane: false },
+    { ep: 1742, sara: false, roxane: true },
+    { ep: 1743, sara: false, roxane: true },
+    { ep: 1744, sara: false, roxane: true },
+    { ep: 1745, sara: false, roxane: true },
+    { ep: 1746, sara: false, roxane: true },
+    { ep: 1747, sara: false, roxane: false },
+    { ep: 1748, sara: false, roxane: false }
+  ],
+  "7-104": [
+    { ep: 1749, sara: false, roxane: false },
+    { ep: 1750, sara: false, roxane: false },
+    { ep: 1751, sara: true, roxane: false },
+    { ep: 1752, sara: true, roxane: false },
+    { ep: 1753, sara: false, roxane: false },
+    { ep: 1754, sara: true, roxane: false },
+    { ep: 1755, sara: true, roxane: false },
+    { ep: 1756, sara: true, roxane: true },
+    { ep: 1757, sara: true, roxane: true },
+    { ep: 1758, sara: true, roxane: false },
+    { ep: 1759, sara: true, roxane: false },
+    { ep: 1760, sara: false, roxane: true },
+    { ep: 1761, sara: true, roxane: false },
+    { ep: 1762, sara: true, roxane: true },
+    { ep: 1763, sara: true, roxane: true },
+    { ep: 1764, sara: true, roxane: true },
+    { ep: 1765, sara: true, roxane: true }
+  ],
+  "8-108": [
+    { ep: 1798, sara: true, roxane: false },
+    { ep: 1799, sara: true, roxane: false },
+    { ep: 1800, sara: false, roxane: false },
+    { ep: 1801, sara: true, roxane: false },
+    { ep: 1802, sara: true, roxane: false },
+    { ep: 1803, sara: true, roxane: true },
+    { ep: 1804, sara: true, roxane: true },
+    { ep: 1805, sara: true, roxane: false },
+    { ep: 1806, sara: true, roxane: true },
+    { ep: 1807, sara: true, roxane: true },
+    { ep: 1808, sara: true, roxane: true },
+    { ep: 1809, sara: true, roxane: true },
+    { ep: 1810, sara: true, roxane: true },
+    { ep: 1811, sara: false, roxane: true },
+    { ep: 1812, sara: false, roxane: true },
+    { ep: 1813, sara: false, roxane: true },
+    { ep: 1814, sara: false, roxane: true },
+    { ep: 1815, sara: true, roxane: true },
+    { ep: 1816, sara: false, roxane: true },
+    { ep: 1817, sara: true, roxane: true }
+  ],
+  "8-109": [
+    { ep: 1818, sara: true, roxane: true },
+    { ep: 1819, sara: true, roxane: true },
+    { ep: 1820, sara: false, roxane: false },
+    { ep: 1821, sara: true, roxane: false },
+    { ep: 1822, sara: false, roxane: true },
+    { ep: 1823, sara: false, roxane: false },
+    { ep: 1824, sara: false, roxane: false },
+    { ep: 1825, sara: false, roxane: true },
+    { ep: 1826, sara: false, roxane: false },
+    { ep: 1827, sara: false, roxane: false },
+    { ep: 1828, sara: false, roxane: false },
+    { ep: 1829, sara: true, roxane: true },
+    { ep: 1830, sara: true, roxane: false },
+    { ep: 1831, sara: false, roxane: true },
+    { ep: 1832, sara: false, roxane: true }
+  ],
+  "8-112": [
+    { ep: 1856, sara: false, roxane: false },
+    { ep: 1857, sara: true, roxane: false },
+    { ep: 1858, sara: true, roxane: true },
+    { ep: 1859, sara: true, roxane: true },
+    { ep: 1860, sara: true, roxane: true },
+    { ep: 1861, sara: true, roxane: true },
+    { ep: 1862, sara: false, roxane: true },
+    { ep: 1863, sara: true, roxane: false },
+    { ep: 1864, sara: true, roxane: false },
+    { ep: 1865, sara: false, roxane: false },
+    { ep: 1866, sara: false, roxane: true },
+    { ep: 1867, sara: false, roxane: true },
+    { ep: 1868, sara: false, roxane: false },
+    { ep: 1869, sara: false, roxane: true },
+    { ep: 1870, sara: false, roxane: true },
+    { ep: 1871, sara: false, roxane: true }
+  ],
+  "8-115": [
+    { ep: 1896, sara: false, roxane: true },
+    { ep: 1897, sara: false, roxane: true },
+    { ep: 1898, sara: false, roxane: true },
+    { ep: 1899, sara: false, roxane: true },
+    { ep: 1900, sara: false, roxane: true },
+    { ep: 1901, sara: false, roxane: true },
+    { ep: 1902, sara: false, roxane: true },
+    { ep: 1903, sara: false, roxane: true },
+    { ep: 1904, sara: false, roxane: true },
+    { ep: 1905, sara: false, roxane: true },
+    { ep: 1906, sara: false, roxane: true },
+    { ep: 1907, sara: false, roxane: true },
+    { ep: 1908, sara: false, roxane: true },
+    { ep: 1909, sara: false, roxane: false }
+  ],
+  "8-116": [
+    { ep: 1910, sara: false, roxane: true },
+    { ep: 1911, sara: false, roxane: false },
+    { ep: 1912, sara: false, roxane: true },
+    { ep: 1913, sara: false, roxane: true },
+    { ep: 1914, sara: false, roxane: true },
+    { ep: 1915, sara: false, roxane: true },
+    { ep: 1916, sara: false, roxane: false },
+    { ep: 1917, sara: false, roxane: true },
+    { ep: 1918, sara: false, roxane: true },
+    { ep: 1919, sara: false, roxane: true },
+    { ep: 1920, sara: true, roxane: true },
+    { ep: 1921, sara: false, roxane: false },
+    { ep: 1922, sara: false, roxane: true },
+    { ep: 1923, sara: false, roxane: true },
+    { ep: 1924, sara: false, roxane: true }
+  ],
+  "8-118": [
+    { ep: 1941, sara: false, roxane: false },
+    { ep: 1942, sara: false, roxane: true },
+    { ep: 1943, sara: false, roxane: true },
+    { ep: 1944, sara: false, roxane: true },
+    { ep: 1945, sara: false, roxane: true },
+    { ep: 1946, sara: true, roxane: true },
+    { ep: 1947, sara: true, roxane: true },
+    { ep: 1948, sara: false, roxane: true },
+    { ep: 1949, sara: false, roxane: true },
+    { ep: 1950, sara: false, roxane: true },
+    { ep: 1951, sara: true, roxane: false },
+    { ep: 1952, sara: false, roxane: true },
+    { ep: 1953, sara: false, roxane: true },
+    { ep: 1954, sara: true, roxane: true },
+    { ep: 1955, sara: true, roxane: true },
+    { ep: 1956, sara: false, roxane: true }
+  ],
+  "8-121": [
+    { ep: 1983, sara: false, roxane: false },
+    { ep: 1984, sara: false, roxane: true },
+    { ep: 1985, sara: false, roxane: false },
+    { ep: 1986, sara: false, roxane: true },
+    { ep: 1987, sara: false, roxane: true },
+    { ep: 1988, sara: false, roxane: false },
+    { ep: 1989, sara: false, roxane: false },
+    { ep: 1990, sara: false, roxane: true },
+    { ep: 1991, sara: false, roxane: false },
+    { ep: 1992, sara: false, roxane: false },
+    { ep: 1993, sara: false, roxane: false },
+    { ep: 1994, sara: false, roxane: true },
+    { ep: 1995, sara: false, roxane: true },
+    { ep: 1996, sara: false, roxane: false },
+    { ep: 1997, sara: false, roxane: false },
+    { ep: 1998, sara: false, roxane: true },
+    { ep: 1999, sara: false, roxane: false },
+    { ep: 2000, sara: true, roxane: true }
+  ],
+  "8-122": [
+    { ep: 2001, sara: true, roxane: true },
+    { ep: 2002, sara: true, roxane: true },
+    { ep: 2003, sara: true, roxane: false },
+    { ep: 2004, sara: true, roxane: true },
+    { ep: 2005, sara: true, roxane: true },
+    { ep: 2006, sara: true, roxane: false },
+    { ep: 2007, sara: true, roxane: true },
+    { ep: 2008, sara: true, roxane: true },
+    { ep: 2009, sara: true, roxane: true },
+    { ep: 2010, sara: true, roxane: false },
+    { ep: 2011, sara: true, roxane: false },
+    { ep: 2012, sara: true, roxane: true },
+    { ep: 2013, sara: true, roxane: false },
+    { ep: 2014, sara: true, roxane: true },
+    { ep: 2015, sara: true, roxane: true }
+  ],
+  "8-123": [
+    { ep: 2016, sara: true, roxane: false },
+    { ep: 2017, sara: true, roxane: false },
+    { ep: 2018, sara: true, roxane: true },
+    { ep: 2019, sara: true, roxane: false },
+    { ep: 2020, sara: true, roxane: false },
+    { ep: 2021, sara: false, roxane: false },
+    { ep: 2022, sara: true, roxane: false },
+    { ep: 2023, sara: false, roxane: false },
+    { ep: 2024, sara: true, roxane: true },
+    { ep: 2025, sara: false, roxane: false }
+  ],
+  "9-124": [
+    { ep: 2026, sara: true, roxane: true },
+    { ep: 2027, sara: true, roxane: true },
+    { ep: 2028, sara: true, roxane: true },
+    { ep: 2029, sara: true, roxane: true },
+    { ep: 2030, sara: true, roxane: false },
+    { ep: 2031, sara: true, roxane: true },
+    { ep: 2032, sara: true, roxane: false },
+    { ep: 2033, sara: true, roxane: true },
+    { ep: 2034, sara: true, roxane: true },
+    { ep: 2035, sara: true, roxane: true }
+  ],
+  "9-125": [
+    { ep: 2036, sara: true, roxane: true },
+    { ep: 2037, sara: true, roxane: true },
+    { ep: 2038, sara: false, roxane: false },
+    { ep: 2039, sara: false, roxane: false },
+    { ep: 2040, sara: false, roxane: false },
+    { ep: 2041, sara: true, roxane: true },
+    { ep: 2042, sara: true, roxane: true }
+  ],
+  "9-126": [
+    { ep: 2043, sara: true, roxane: false },
+    { ep: 2044, sara: true, roxane: false },
+    { ep: 2045, sara: true, roxane: false },
+    { ep: 2046, sara: true, roxane: false },
+    { ep: 2047, sara: true, roxane: false },
+    { ep: 2048, sara: true, roxane: false },
+    { ep: 2049, sara: true, roxane: false },
+    { ep: 2050, sara: true, roxane: false },
+    { ep: 2051, sara: true, roxane: false },
+    { ep: 2052, sara: true, roxane: false },
+    { ep: 2053, sara: true, roxane: false },
+    { ep: 2054, sara: true, roxane: true }
+  ],
+  "9-127": [
+    { ep: 2055, sara: false, roxane: false },
+    { ep: 2056, sara: true, roxane: true },
+    { ep: 2057, sara: false, roxane: false },
+    { ep: 2058, sara: false, roxane: false },
+    { ep: 2059, sara: false, roxane: false },
+    { ep: 2060, sara: false, roxane: false },
+    { ep: 2061, sara: false, roxane: false },
+    { ep: 2062, sara: false, roxane: false },
+    { ep: 2063, sara: false, roxane: false },
+    { ep: 2064, sara: true, roxane: true },
+    { ep: 2065, sara: true, roxane: true },
+    { ep: 2066, sara: true, roxane: false },
+    { ep: 2067, sara: false, roxane: true }
+  ],
+  "9-128": [
+    { ep: 2068, sara: false, roxane: false },
+    { ep: 2069, sara: false, roxane: false },
+    { ep: 2070, sara: false, roxane: false },
+    { ep: 2071, sara: false, roxane: false },
+    { ep: 2072, sara: false, roxane: false },
+    { ep: 2073, sara: false, roxane: false },
+    { ep: 2074, sara: false, roxane: false },
+    { ep: 2075, sara: true, roxane: true },
+    { ep: 2076, sara: true, roxane: true },
+    { ep: 2077, sara: true, roxane: false },
+    { ep: 2078, sara: true, roxane: true },
+    { ep: 2079, sara: true, roxane: false },
+    { ep: 2080, sara: true, roxane: false }
+  ],
+  "9-129": [
+    { ep: 2081, sara: false, roxane: false },
+    { ep: 2082, sara: false, roxane: false },
+    { ep: 2083, sara: false, roxane: true },
+    { ep: 2084, sara: true, roxane: false },
+    { ep: 2085, sara: true, roxane: true },
+    { ep: 2086, sara: false, roxane: true },
+    { ep: 2087, sara: false, roxane: false },
+    { ep: 2088, sara: true, roxane: true },
+    { ep: 2089, sara: true, roxane: true },
+    { ep: 2090, sara: true, roxane: true }
+  ],
+  "9-130": [
+    { ep: 2091, sara: false, roxane: false },
+    { ep: 2092, sara: true, roxane: true },
+    { ep: 2093, sara: false, roxane: true },
+    { ep: 2094, sara: false, roxane: true },
+    { ep: 2095, sara: false, roxane: true },
+    { ep: 2096, sara: true, roxane: true },
+    { ep: 2097, sara: false, roxane: true },
+    { ep: 2098, sara: false, roxane: false },
+    { ep: 2099, sara: false, roxane: false }
+  ],
+  "9-131": [
+    { ep: 2100, sara: true, roxane: true },
+    { ep: 2101, sara: false, roxane: false },
+    { ep: 2102, sara: true, roxane: true },
+    { ep: 2103, sara: true, roxane: true },
+    { ep: 2104, sara: false, roxane: false },
+    { ep: 2105, sara: true, roxane: false },
+    { ep: 2106, sara: true, roxane: false },
+    { ep: 2107, sara: true, roxane: false },
+    { ep: 2108, sara: true, roxane: true },
+    { ep: 2109, sara: false, roxane: false },
+    { ep: 2110, sara: true, roxane: false },
+    { ep: 2111, sara: false, roxane: false }
+  ],
+  "9-132": [
+    { ep: 2112, sara: false, roxane: false },
+    { ep: 2113, sara: false, roxane: false },
+    { ep: 2114, sara: true, roxane: false },
+    { ep: 2115, sara: true, roxane: false },
+    { ep: 2116, sara: true, roxane: false },
+    { ep: 2117, sara: true, roxane: false },
+    { ep: 2118, sara: true, roxane: false },
+    { ep: 2119, sara: true, roxane: false },
+    { ep: 2120, sara: true, roxane: false },
+    { ep: 2121, sara: false, roxane: true },
+    { ep: 2122, sara: true, roxane: true },
+    { ep: 2123, sara: true, roxane: false },
+    { ep: 2124, sara: true, roxane: false }
+  ],
+  "9-133": [
+    { ep: 2125, sara: true, roxane: true },
+    { ep: 2126, sara: true, roxane: true },
+    { ep: 2127, sara: true, roxane: true },
+    { ep: 2128, sara: true, roxane: true },
+    { ep: 2129, sara: true, roxane: true },
+    { ep: 2130, sara: true, roxane: true },
+    { ep: 2131, sara: true, roxane: true },
+    { ep: 2132, sara: true, roxane: true },
+    { ep: 2133, sara: true, roxane: true },
+    { ep: 2134, sara: true, roxane: true },
+    { ep: 2135, sara: true, roxane: true },
+    { ep: 2136, sara: true, roxane: true },
+    { ep: 2137, sara: true, roxane: true },
+    { ep: 2138, sara: true, roxane: true },
+    { ep: 2139, sara: true, roxane: true }
+  ],
+  "9-134": [
+    { ep: 2140, sara: true, roxane: true },
+    { ep: 2141, sara: true, roxane: true },
+    { ep: 2142, sara: true, roxane: true },
+    { ep: 2143, sara: false, roxane: false },
+    { ep: 2144, sara: false, roxane: false },
+    { ep: 2145, sara: false, roxane: true },
+    { ep: 2146, sara: false, roxane: true }
+  ],
+  "9-135": [
+    { ep: 2147, sara: true, roxane: true },
+    { ep: 2148, sara: false, roxane: false },
+    { ep: 2149, sara: false, roxane: false },
+    { ep: 2150, sara: false, roxane: false },
+    { ep: 2151, sara: false, roxane: true },
+    { ep: 2152, sara: false, roxane: false },
+    { ep: 2153, sara: false, roxane: true },
+    { ep: 2154, sara: false, roxane: false },
+    { ep: 2155, sara: false, roxane: true },
+    { ep: 2156, sara: true, roxane: true },
+    { ep: 2157, sara: true, roxane: true },
+    { ep: 2158, sara: false, roxane: false },
+    { ep: 2159, sara: false, roxane: true },
+    { ep: 2160, sara: false, roxane: false }
+  ],
+  "9-136": [
+    { ep: 2161, sara: true, roxane: false },
+    { ep: 2162, sara: false, roxane: false },
+    { ep: 2163, sara: false, roxane: true },
+    { ep: 2164, sara: false, roxane: false },
+    { ep: 2165, sara: false, roxane: true },
+    { ep: 2166, sara: false, roxane: false },
+    { ep: 2167, sara: true, roxane: false },
+    { ep: 2168, sara: false, roxane: false },
+    { ep: 2169, sara: true, roxane: true },
+    { ep: 2170, sara: true, roxane: true },
+    { ep: 2171, sara: false, roxane: false },
+    { ep: 2172, sara: false, roxane: true },
+    { ep: 2173, sara: false, roxane: false }
+  ],
+  "9-137": [
+    { ep: 2174, sara: true, roxane: false },
+    { ep: 2175, sara: false, roxane: false },
+    { ep: 2176, sara: true, roxane: true },
+    { ep: 2177, sara: false, roxane: true },
+    { ep: 2178, sara: true, roxane: true },
+    { ep: 2179, sara: false, roxane: false },
+    { ep: 2180, sara: false, roxane: true },
+    { ep: 2181, sara: true, roxane: true },
+    { ep: 2182, sara: true, roxane: true },
+    { ep: 2183, sara: false, roxane: false },
+    { ep: 2184, sara: false, roxane: true },
+    { ep: 2185, sara: false, roxane: true },
+    { ep: 2186, sara: true, roxane: true }
+  ],
+  "9-138": [
+    { ep: 2187, sara: false, roxane: false },
+    { ep: 2188, sara: true, roxane: true },
+    { ep: 2189, sara: false, roxane: false },
+    { ep: 2190, sara: false, roxane: false },
+    { ep: 2191, sara: false, roxane: false },
+    { ep: 2192, sara: false, roxane: true },
+    { ep: 2193, sara: false, roxane: false }
+  ],
+  "9-139": [
+    { ep: 2194, sara: false, roxane: false },
+    { ep: 2195, sara: true, roxane: true },
+    { ep: 2196, sara: false, roxane: false },
+    { ep: 2197, sara: false, roxane: false },
+    { ep: 2198, sara: false, roxane: true },
+    { ep: 2199, sara: true, roxane: false },
+    { ep: 2200, sara: false, roxane: false },
+    { ep: 2201, sara: false, roxane: false },
+    { ep: 2202, sara: false, roxane: false },
+    { ep: 2203, sara: false, roxane: true },
+    { ep: 2204, sara: false, roxane: false },
+    { ep: 2205, sara: false, roxane: false }
+  ],
+  "9-140": [
+    { ep: 2206, sara: false, roxane: true },
+    { ep: 2207, sara: false, roxane: false },
+    { ep: 2208, sara: false, roxane: true },
+    { ep: 2209, sara: false, roxane: false },
+    { ep: 2210, sara: false, roxane: false },
+    { ep: 2211, sara: false, roxane: false },
+    { ep: 2212, sara: false, roxane: false },
+    { ep: 2213, sara: false, roxane: true },
+    { ep: 2214, sara: false, roxane: false },
+    { ep: 2215, sara: false, roxane: false },
+    { ep: 2216, sara: false, roxane: true },
+    { ep: 2217, sara: false, roxane: true },
+    { ep: 2218, sara: false, roxane: true },
+    { ep: 2219, sara: false, roxane: false },
+    { ep: 2220, sara: false, roxane: false },
+    { ep: 2221, sara: false, roxane: false }
+  ],
+  "9-141": [
+    { ep: 2222, sara: true, roxane: false },
+    { ep: 2223, sara: false, roxane: false },
+    { ep: 2224, sara: false, roxane: true },
+    { ep: 2225, sara: true, roxane: false },
+    { ep: 2226, sara: true, roxane: true },
+    { ep: 2227, sara: false, roxane: false },
+    { ep: 2228, sara: true, roxane: false },
+    { ep: 2229, sara: true, roxane: false },
+    { ep: 2230, sara: false, roxane: false },
+    { ep: 2231, sara: true, roxane: true },
+    { ep: 2232, sara: false, roxane: false },
+    { ep: 2233, sara: false, roxane: false },
+    { ep: 2234, sara: false, roxane: false },
+    { ep: 2235, sara: false, roxane: false }
+  ]
+};
+
+/** Kiss counts by global ep (from your kiss tracker spreadsheet). Capped in kissCountForEp for UI. */
+const EPISODE_KISS_COUNT = {
+  639: 1,
+  645: 2,
+  646: 2,
+  648: 1,
+  653: 1,
+  660: 4,
+  661: 3,
+  663: 1,
+  666: 1,
+  667: 1,
+  674: 1,
+  852: 1,
+  903: 1,
+  904: 1,
+  920: 1,
+  923: 1,
+  929: 1,
+  1043: 3,
+  1044: 4,
+  1085: 1,
+  1091: 6,
+  1103: 1,
+  1138: 2,
+  1148: 1,
+  1150: 1,
+  1156: 1,
+  1164: 1,
+  1168: 4,
+  1178: 2,
+  1181: 1,
+  1185: 1,
+  1222: 3,
+  1228: 1,
+  1231: 1,
+  1232: 1,
+  1244: 1,
+  1245: 2,
+  1315: 1,
+  1324: 2,
+  1345: 1,
+  1346: 1,
+  1433: 1,
+  1435: 1,
+  1470: 2,
+  1487: 2,
+  1490: 1,
+  1505: 1,
+  1625: 1,
+  1642: 1,
+  1648: 3,
+  1668: 1,
+  1669: 1,
+  1672: 1,
+  1684: 1,
+  1763: 1,
+  1806: 1,
+  1818: 1,
+  1860: 1,
+  2012: 1,
+  2054: 1,
+  2139: 1,
+  2140: 1,
+  2141: 1,
+  2142: 1,
+  2147: 1,
+  2156: 2,
+  2157: 2
+};
+
+function kissCountForEp(ep) {
+  const n = EPISODE_KISS_COUNT[ep];
+  return typeof n === "number" && n > 0 ? Math.min(Math.floor(n), 12) : 0;
+}
+
+const KISS_LIP_PATH =
+  "M32.201 7.791c-2.223-.36-7.568-3.963-11.411-2.762s-3.542 2.162-5.464 2.763c-1.922.601-2.222-.36-6.065.841c-3.842 1.201-6.184 7.206-7.805 8.768c0 0-1.603 1.621-1.021 3.483c.583 1.861 2.523 1.32 2.523 1.32c6.726-2.102 9.007-4.925 9.007-4.925s3.482 1.021 6.364.12c2.882-.901 5.164-3.724 5.164-3.724s3.484 1.021 10.209-1.081c0 0 1.902-.661 1.32-2.522c-.583-1.862-2.821-2.281-2.821-2.281zm-1.082 6.666c-5.764 1.801-4.562 5.644-11.288 7.747c-6.726 2.102-7.927-1.74-13.691.061c-1.921.601-2.582 1.861-2.281 2.824c.9 2.881 8.407 10.025 18.976 6.723c10.568-3.303 12.67-13.452 11.769-16.333c-.301-.963-1.564-1.623-3.485-1.022z";
+
+/** Muted lip underprint (slightly offset) behind white — reads on pink / orange cells */
+const KISS_LIP_UNDERPRINT = "#8f8780";
+
+function kissLipLayeredSvgFragment(offsetY) {
+  const g0 = offsetY ? `<g transform="translate(0 ${offsetY})">` : "<g>";
+  return `${g0}<path fill="${KISS_LIP_UNDERPRINT}" transform="translate(2.1 2.4)" d="${KISS_LIP_PATH}"/><path fill="#ffffff" d="${KISS_LIP_PATH}"/></g>`;
+}
+
+/** Twemoji-style kiss mark (SVGRepo): white lips on episode cells; dark lips in page legend (cream background). */
+function kissCoupleSvgHtml(variant) {
+  let classes = "appear-cell__kiss-svg appear-cell__kiss-svg--twemoji";
+  if (variant === "small") classes += " appear-cell__kiss-svg--small";
+  else if (variant === "legend") classes += " appear-cell__kiss-svg--legend";
+  const lipFill = variant === "legend" ? "#2c2824" : "#ffffff";
+  if (variant === "legend") {
+    return `<svg class="${classes}" viewBox="-3.6 -3.6 43.2 43.2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" fill="none" aria-hidden="true" focusable="false" style="background:transparent"><path fill="${lipFill}" d="${KISS_LIP_PATH}"/></svg>`;
+  }
+  return `<svg class="${classes}" viewBox="-3.6 -3.6 43.2 43.2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" fill="none" aria-hidden="true" focusable="false" style="background:transparent">${kissLipLayeredSvgFragment(0)}</svg>`;
+}
+
+/** Two kisses: grey underprint + white per mark, tighter vertical step so they read stacked / overlapping. */
+function kissCoupleSvgDoubleHtml() {
+  return `<svg class="appear-cell__kiss-svg appear-cell__kiss-svg--twemoji appear-cell__kiss-svg--double" viewBox="-3.6 -2 43.2 87" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" fill="none" aria-hidden="true" focusable="false" style="background:transparent">${kissLipLayeredSvgFragment(0)}${kissLipLayeredSvgFragment(32)}</svg>`;
+}
+
+function appearKissInnerHtml(ep) {
+  const count = kissCountForEp(ep);
+  if (count === 0) return "";
+  if (count === 1) {
+    return `<span class="appear-cell__kiss" aria-hidden="true">${kissCoupleSvgHtml()}</span>`;
+  }
+  if (count === 2) {
+    return `<span class="appear-cell__kiss" aria-hidden="true">${kissCoupleSvgDoubleHtml()}</span>`;
+  }
+  const lines = Array.from({ length: count }, () =>
+    `<span class="appear-cell__kiss-line appear-cell__kiss" aria-hidden="true">${kissCoupleSvgHtml("small")}</span>`
+  ).join("");
+  return `<span class="appear-cell__kiss appear-cell__kiss--stacked" aria-hidden="true">${lines}</span>`;
+}
+
+const TRANSLATIONS = {
+  en: {
+    title: "The Roxara Line",
+    brand: "ROXARA",
+    strap: "Storyline metro line",
+    mapTitle: "All their storylines and milestones in chronological order",
+    season: "Season",
+    terminus: "Station",
+    milestone: "Milestone",
+    epPrefix: "ep.",
+    pillRoxane: "Roxane central character",
+    pillSara: "Sara central character",
+    pillBoth: "Roxane + Sara central characters",
+    legendTitle: "Legend",
+    legendStations: "Stations (arcs)",
+    legendSubstop: "Not as central characters",
+    legendInterchanges: "Milestones",
+    legendSeasons: "Lines",
+    legendToggleExpand: "Show legend",
+    legendToggleCollapse: "Hide legend",
+    sourceLabel: "Source:",
+    sourceLinkText: "Wiki Demain nous appartient",
+    watchTf1Link: "Watch Roxara on TF1",
+    langLabel: "Language",
+    m_firstMeeting: "First meeting",
+    m_dating: "Official dating",
+    m_engagement: "Engagement",
+    m_wedding: "Wedding",
+    m_enora: "Enora",
+    readMoreOpenBtn: "Read more",
+    readMoreCloseBtn: "Close",
+    appearancesTitle: "Appearances by episode",
+    appearancesRowSara: "Sara",
+    appearancesRowRoxane: "Roxane",
+    appearancesLegendOnSara: "Sara on screen",
+    appearancesLegendOnRoxane: "Roxane on screen",
+    appearancesLegendOff: "Not on screen",
+    appearancesLegendKiss: "Kiss"
+  },
+  fr: {
+    title: "La ligne Roxara",
+    brand: "ROXARA",
+    strap: "Ligne métro des intrigues",
+    mapTitle: "Toutes leurs intrigues et étapes marquantes par ordre chronologique",
+    season: "Saison",
+    terminus: "Station",
+    milestone: "Étape marquante",
+    epPrefix: "ép.",
+    pillRoxane: "Roxane rôle majeur",
+    pillSara: "Sara rôle majeur",
+    pillBoth: "Roxane + Sara rôles majeurs",
+    legendTitle: "Légende",
+    legendStations: "Stations (intrigues)",
+    legendSubstop: "Pas de rôle majeur",
+    legendInterchanges: "Étapes marquantes",
+    legendSeasons: "Lignes",
+    legendToggleExpand: "Afficher la légende",
+    legendToggleCollapse: "Masquer la légende",
+    sourceLabel: "Source :",
+    sourceLinkText: "Wiki Demain nous appartient",
+    watchTf1Link: "Regarder Roxara sur TF1",
+    langLabel: "Langue",
+    m_firstMeeting: "Première rencontre",
+    m_dating: "Mise en couple officielle",
+    m_engagement: "Fiançailles",
+    m_wedding: "Mariage",
+    m_enora: "Enora",
+    readMoreOpenBtn: "En savoir plus",
+    readMoreCloseBtn: "Fermer",
+    appearancesTitle: "Présences par épisode",
+    appearancesRowSara: "Sara",
+    appearancesRowRoxane: "Roxane",
+    appearancesLegendOnSara: "Sara à l’écran",
+    appearancesLegendOnRoxane: "Roxane à l’écran",
+    appearancesLegendOff: "Pas à l’écran",
+    appearancesLegendKiss: "Baiser"
+  },
+  es: {
+    title: "La línea Roxara",
+    brand: "ROXARA",
+    strap: "Línea metro de las tramas",
+    mapTitle: "Todas sus tramas e hitos en orden cronológico",
+    season: "Temporada",
+    terminus: "Station",
+    milestone: "Hito",
+    epPrefix: "ep.",
+    pillRoxane: "Roxane papel principal",
+    pillSara: "Sara papel principal",
+    pillBoth: "Roxane + Sara papel principal",
+    legendTitle: "Leyenda",
+    legendStations: "Estaciones (tramas)",
+    legendSubstop: "Sin papel principal",
+    legendInterchanges: "Hitos",
+    legendSeasons: "Líneas",
+    legendToggleExpand: "Mostrar leyenda",
+    legendToggleCollapse: "Ocultar leyenda",
+    sourceLabel: "Fuente:",
+    sourceLinkText: "Wiki Demain nous appartient",
+    watchTf1Link: "Ver Roxara en TF1",
+    langLabel: "Idioma",
+    m_firstMeeting: "Primer encuentro",
+    m_dating: "Oficialización de la pareja",
+    m_engagement: "Compromiso",
+    m_wedding: "Boda",
+    m_enora: "Enora",
+    readMoreOpenBtn: "Leer más",
+    readMoreCloseBtn: "Cerrar",
+    appearancesTitle: "Apariciones por episodio",
+    appearancesRowSara: "Sara",
+    appearancesRowRoxane: "Roxane",
+    appearancesLegendOnSara: "Sara en pantalla",
+    appearancesLegendOnRoxane: "Roxane en pantalla",
+    appearancesLegendOff: "No aparece",
+    appearancesLegendKiss: "Beso"
+  },
+  pt: {
+    title: "A linha Roxara",
+    brand: "ROXARA",
+    strap: "Linha metro das tramas",
+    mapTitle: "Todas as tramas e marcos em ordem cronológica",
+    season: "Temporada",
+    terminus: "Station",
+    milestone: "Marco",
+    epPrefix: "ep.",
+    pillRoxane: "Roxane papel principal",
+    pillSara: "Sara papel principal",
+    pillBoth: "Roxane + Sara papel principal",
+    legendTitle: "Legenda",
+    legendStations: "Estações (tramas)",
+    legendSubstop: "Sem papel principal",
+    legendInterchanges: "Marcos",
+    legendSeasons: "Linhas",
+    legendToggleExpand: "Mostrar legenda",
+    legendToggleCollapse: "Ocultar legenda",
+    sourceLabel: "Fonte:",
+    sourceLinkText: "Wiki Demain nous appartient",
+    watchTf1Link: "Ver Roxara na TF1",
+    langLabel: "Idioma",
+    m_firstMeeting: "Primeiro encontro",
+    m_dating: "Oficialização do namoro",
+    m_engagement: "Noivado",
+    m_wedding: "Casamento",
+    m_enora: "Enora",
+    readMoreOpenBtn: "Ler mais",
+    readMoreCloseBtn: "Fechar",
+    appearancesTitle: "Presenças por episódio",
+    appearancesRowSara: "Sara",
+    appearancesRowRoxane: "Roxane",
+    appearancesLegendOnSara: "Sara em cena",
+    appearancesLegendOnRoxane: "Roxane em cena",
+    appearancesLegendOff: "Não aparece",
+    appearancesLegendKiss: "Beijo"
+  },
+  de: {
+    title: "Die Roxara-Linie",
+    brand: "ROXARA",
+    strap: "Storyline-U-Bahn-Linie",
+    mapTitle: "Alle ihre Storylines und Meilensteine in chronologischer Reihenfolge",
+    season: "Staffel",
+    terminus: "Station",
+    milestone: "Meilenstein",
+    epPrefix: "Ep.",
+    pillRoxane: "Roxane Hauptrolle",
+    pillSara: "Sara Hauptrolle",
+    pillBoth: "Roxane + Sara Hauptrollen",
+    legendTitle: "Legende",
+    legendStations: "Stationen (Storylines)",
+    legendSubstop: "Keine Hauptrolle",
+    legendInterchanges: "Meilensteine",
+    legendSeasons: "Linien",
+    legendToggleExpand: "Legende einblenden",
+    legendToggleCollapse: "Legende ausblenden",
+    sourceLabel: "Quelle:",
+    sourceLinkText: "Wiki Demain nous appartient",
+    watchTf1Link: "Roxara auf TF1 ansehen",
+    langLabel: "Sprache",
+    m_firstMeeting: "Erstes Treffen",
+    m_dating: "Offizielle Beziehung",
+    m_engagement: "Verlobung",
+    m_wedding: "Hochzeit",
+    m_enora: "Enora",
+    readMoreOpenBtn: "Mehr",
+    readMoreCloseBtn: "Schließen",
+    appearancesTitle: "Auftritte nach Folge",
+    appearancesRowSara: "Sara",
+    appearancesRowRoxane: "Roxane",
+    appearancesLegendOnSara: "Sara zu sehen",
+    appearancesLegendOnRoxane: "Roxane zu sehen",
+    appearancesLegendOff: "Nicht zu sehen",
+    appearancesLegendKiss: "Kuss"
+  }
+};
+
+const STORAGE_KEY = "dna-arcs-metro-lang";
+let currentLang = (typeof localStorage !== "undefined" && localStorage.getItem(STORAGE_KEY)) || "fr";
+if (!TRANSLATIONS[currentLang]) currentLang = "fr";
+
+function t() { return TRANSLATIONS[currentLang]; }
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+function pillLabel(status) {
+  const tr = t();
+  return status === 1 ? tr.pillRoxane : status === 2 ? tr.pillSara : status === 3 ? tr.pillBoth : "";
+}
+function arcEpRange(arc) {
+  const m = String(arc[3]).match(/(\d+)\s*(?:à|→|–|-)\s*(\d+)/) || String(arc[3]).match(/^(\d+)$/);
+  if (!m) return null;
+  const start = parseInt(m[1], 10);
+  const end = m[2] ? parseInt(m[2], 10) : start;
+  return [start, end];
+}
+
+/** Appearance matrix in Read more: show whenever we have per-episode appearance rows for this arc key. */
+function shouldShowAppearancesInReadMore(key) {
+  const rows = ARC_EP_APPEARANCES[key];
+  if (!rows || !rows.length) return false;
+  return !!ARCS.find((a) => `${a[0]}-${a[1]}` === key);
+}
+
+function eventTitle(ev) {
+  const L = ev.labels || {};
+  return L[currentLang] || L.en || L.fr || "";
+}
+
+function arcEventEmoji(ev) {
+  const e = ev.emoji;
+  if (typeof e === "string" && e.trim().length > 0) return e.trim();
+  return "\u26A0\uFE0F";
+}
+
+function synopsisText(key) {
+  const row = ARC_SYNOPSES[key];
+  if (!row) return "";
+  return row[currentLang] || row.fr || "";
+}
+
+function arcHasReadMore(key) {
+  return !!(synopsisText(key) || shouldShowAppearancesInReadMore(key));
+}
+
+function renderAppearancesHtml(key) {
+  const rows = ARC_EP_APPEARANCES[key];
+  if (!rows || !rows.length) return "";
+  const tr = t();
+  const cols = rows.length;
+  const showKissLegend = rows.some(({ ep, sara, roxane }) => kissCountForEp(ep) > 0 && (!!sara || !!roxane));
+  let html = `<section class="appear-section">`;
+  html += `<h3 class="appear-section-title">${escapeHtml(tr.appearancesTitle)}</h3>`;
+  html += `<div class="appear-scroll"><div class="appear-grid" style="--appear-cols: ${cols}">`;
+  html += `<span class="appear-corner"></span>`;
+  rows.forEach(({ ep }) => {
+    html += `<span class="appear-ep-head">${ep}</span>`;
+  });
+  html += `<span class="appear-row-label appear-row-label--sara">${escapeHtml(tr.appearancesRowSara)}</span>`;
+  rows.forEach(({ ep, sara }) => {
+    const on = !!sara;
+    const kissCount = on ? kissCountForEp(ep) : 0;
+    const kissNote = kissCount > 0
+      ? " · " + tr.appearancesLegendKiss + (kissCount > 1 ? " (\u00d7" + kissCount + ")" : "")
+      : "";
+    const title = `${ep} · ${tr.appearancesRowSara} · ${on ? tr.appearancesLegendOnSara : tr.appearancesLegendOff}${kissNote}`;
+    const kissHtml = kissCount > 0 ? appearKissInnerHtml(ep) : "";
+    html += `<span class="appear-cell ${on ? "appear-cell--on appear-cell--sara" : "appear-cell--off"}" role="img" aria-label="${escapeHtml(title)}">${kissHtml}</span>`;
+  });
+  html += `<span class="appear-row-label appear-row-label--roxane">${escapeHtml(tr.appearancesRowRoxane)}</span>`;
+  rows.forEach(({ ep, roxane }) => {
+    const on = !!roxane;
+    const kissCount = on ? kissCountForEp(ep) : 0;
+    const kissNote = kissCount > 0
+      ? " · " + tr.appearancesLegendKiss + (kissCount > 1 ? " (\u00d7" + kissCount + ")" : "")
+      : "";
+    const title = `${ep} · ${tr.appearancesRowRoxane} · ${on ? tr.appearancesLegendOnRoxane : tr.appearancesLegendOff}${kissNote}`;
+    const kissHtml = kissCount > 0 ? appearKissInnerHtml(ep) : "";
+    html += `<span class="appear-cell ${on ? "appear-cell--on appear-cell--roxane" : "appear-cell--off"}" role="img" aria-label="${escapeHtml(title)}">${kissHtml}</span>`;
+  });
+  html += `</div></div>`;
+  html += `<div class="appear-legend">`;
+  html += `<span class="appear-legend-item"><span class="appear-swatch appear-swatch--on-sara" aria-hidden="true"></span>${escapeHtml(tr.appearancesLegendOnSara)}</span>`;
+  html += `<span class="appear-legend-item"><span class="appear-swatch appear-swatch--on-roxane" aria-hidden="true"></span>${escapeHtml(tr.appearancesLegendOnRoxane)}</span>`;
+  html += `<span class="appear-legend-item"><span class="appear-swatch appear-swatch--off" aria-hidden="true"></span>${escapeHtml(tr.appearancesLegendOff)}</span>`;
+  if (showKissLegend) {
+    html += `<span class="appear-legend-item"><span class="appear-legend-kiss" aria-hidden="true">${kissCoupleSvgHtml("legend")}</span>${escapeHtml(tr.appearancesLegendKiss)}</span>`;
+  }
+  html += `</div></section>`;
+  return html;
+}
+
+function openSynopsisModal(key, arcTitle) {
+  if (!arcHasReadMore(key)) return;
+  const tr = t();
+  const modal = document.getElementById("synopsis-modal");
+  modal.dataset.synopsisKey = key;
+  modal.dataset.synopsisTitle = arcTitle;
+  document.getElementById("synopsis-sheet-title").textContent = arcTitle;
+  const blurbEl = document.getElementById("synopsis-blurb");
+  const syn = synopsisText(key);
+  blurbEl.textContent = syn;
+  document.getElementById("synopsis-extra").innerHTML = shouldShowAppearancesInReadMore(key) ? renderAppearancesHtml(key) : "";
+  document.getElementById("synopsis-close").textContent = tr.readMoreCloseBtn;
+  modal.hidden = false;
+  modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeSynopsisModal() {
+  const modal = document.getElementById("synopsis-modal");
+  modal.hidden = true;
+  modal.setAttribute("aria-hidden", "true");
+  delete modal.dataset.synopsisKey;
+  delete modal.dataset.synopsisTitle;
+  document.getElementById("synopsis-blurb").textContent = "";
+  document.getElementById("synopsis-extra").innerHTML = "";
+  document.body.style.overflow = "";
+}
+
+function renderHeader() {
+  const tr = t();
+  document.documentElement.lang = currentLang;
+  document.title = tr.title;
+  document.getElementById("brand-name").textContent = tr.brand;
+  document.getElementById("brand-strap").textContent = tr.strap;
+  document.getElementById("lang-label").textContent = tr.langLabel;
+  document.getElementById("map-title").textContent = tr.mapTitle;
+  document.getElementById("legend-title").textContent = tr.legendTitle;
+  updateToggleLabel();
+  document.getElementById("synopsis-close").textContent = tr.readMoreCloseBtn;
+  const synModal = document.getElementById("synopsis-modal");
+  if (!synModal.hidden && synModal.dataset.synopsisKey) {
+    const key = synModal.dataset.synopsisKey;
+    document.getElementById("synopsis-blurb").textContent = synopsisText(key);
+    document.getElementById("synopsis-extra").innerHTML = shouldShowAppearancesInReadMore(key) ? renderAppearancesHtml(key) : "";
+    document.getElementById("synopsis-sheet-title").textContent = synModal.dataset.synopsisTitle || "";
+  }
+  document.getElementById("footer").innerHTML =
+    `<div class="footer-line">${escapeHtml(tr.sourceLabel)} <a href="https://demain-nous-appartient.fandom.com/fr/wiki/Demain_nous_appartient" target="_blank" rel="noopener">${escapeHtml(tr.sourceLinkText)}</a></div>` +
+    `<div class="footer-line"><a href="https://www.tf1.fr/tf1/demain-nous-appartient" target="_blank" rel="noopener">${escapeHtml(tr.watchTf1Link)}</a></div>`;
+}
+
+function renderFloatingLegend() {
+  const tr = t();
+  const seasons = [...new Set(ARCS.map((a) => a[0]))].sort((a, b) => a - b);
+
+  const stationsHtml = `
+    <div class="legend-section">
+      <div class="legend-section-title">${escapeHtml(tr.legendStations)}</div>
+      <div class="legend-list">
+        <div class="legend-item">
+          <span class="legend-marker-cell"><span class="legend-tick"></span></span>
+          <span>${escapeHtml(tr.legendSubstop)}</span>
+        </div>
+        <div class="legend-item" style="color: var(--roxane)">
+          <span class="legend-marker-cell"><span class="legend-disc"></span></span>
+          <span style="color: var(--ink)">${escapeHtml(tr.pillRoxane)}</span>
+        </div>
+        <div class="legend-item" style="color: var(--sara)">
+          <span class="legend-marker-cell"><span class="legend-disc"></span></span>
+          <span style="color: var(--ink)">${escapeHtml(tr.pillSara)}</span>
+        </div>
+        <div class="legend-item" style="color: var(--both)">
+          <span class="legend-marker-cell"><span class="legend-disc"></span></span>
+          <span style="color: var(--ink)">${escapeHtml(tr.pillBoth)}</span>
+        </div>
+      </div>
+    </div>`;
+
+  const milestoneHtml = `
+    <div class="legend-section">
+      <div class="legend-section-title">${escapeHtml(tr.legendInterchanges)}</div>
+      <div class="legend-list">
+        ${MILESTONES.map((m) => {
+          const label = tr["m_" + m.id] || m.id;
+          return `
+            <div class="legend-item">
+              <span class="legend-marker-cell"><span class="legend-icon" style="--mi: ${m.color}">${m.symbol}</span></span>
+              <span>
+                <span style="color: var(--ink)">${escapeHtml(label)}</span>
+                <span class="legend-meta">${escapeHtml(m.date)} · ${escapeHtml(tr.epPrefix)} ${m.ep}</span>
+              </span>
+            </div>`;
+        }).join("")}
+      </div>
+    </div>`;
+
+  const seasonsHtml = `
+    <div class="legend-section">
+      <div class="legend-section-title">${escapeHtml(tr.legendSeasons)}</div>
+      <div class="legend-list">
+        ${seasons.map((s) => {
+          const arcs = ARCS.filter((a) => a[0] === s);
+          return `
+            <div class="legend-item" style="color: ${SEASON_COLORS[s]}">
+              <span class="legend-marker-cell"><span class="legend-line-badge"><span>${s}</span></span></span>
+              <span>
+                <span style="color: var(--ink)">${escapeHtml(tr.season)} ${s}</span>
+                <span class="legend-meta">${escapeHtml(arcs[0][4])} → ${escapeHtml(arcs[arcs.length - 1][5])}</span>
+              </span>
+            </div>`;
+        }).join("")}
+      </div>
+    </div>`;
+
+  document.getElementById("legend-body").innerHTML = stationsHtml + milestoneHtml + seasonsHtml;
+}
+
+function updateToggleLabel() {
+  const tr = t();
+  const panel = document.getElementById("legend-panel");
+  const btn = document.getElementById("legend-toggle");
+  const collapsed = panel.classList.contains("is-collapsed");
+  const label = collapsed ? tr.legendToggleExpand : tr.legendToggleCollapse;
+  btn.setAttribute("aria-label", label);
+  btn.setAttribute("title", label);
+  btn.setAttribute("aria-expanded", String(!collapsed));
+}
+
+function renderMap() {
+  const tr = t();
+  const seasons = [...new Set(ARCS.map((a) => a[0]))].sort((a, b) => a - b);
+  let html = "";
+  seasons.forEach((s, sIdx) => {
+    const arcs = ARCS.filter((a) => a[0] === s);
+    const startDate = arcs[0][4];
+    const endDate = arcs[arcs.length - 1][5];
+    const bc = SEASON_COLORS[s];
+    html += `
+      <div class="season-banner" style="--bc: ${bc}">
+        <div class="marker-cell">
+          <span class="banner-badge"><span class="banner-badge-inner">${s}</span></span>
+        </div>
+        <div class="banner-info">
+          <div class="banner-eyebrow">${escapeHtml(tr.terminus)}</div>
+          <div class="banner-title">${escapeHtml(tr.season)} ${s}</div>
+          <div class="banner-meta">${escapeHtml(startDate)} → ${escapeHtml(endDate)}</div>
+        </div>
+      </div>`;
+
+    arcs.forEach((arc, aIdx) => {
+      const [season, num, title, eps, start, end, url, status] = arc;
+      const arcKey = `${season}-${num}`;
+      const isFeatured = status === 4;
+      const isHi = status >= 1 && status <= 3;
+      const showStation = isHi || isFeatured;
+      const role = isHi ? `var(--${status === 1 ? "roxane" : status === 2 ? "sara" : "both"})` : isFeatured ? bc : "";
+      const markerCls = showStation ? "station-marker is-major" : "station-marker";
+      const markerStyle = showStation ? `--role: ${role};` : "";
+      const isLastInSeason = aIdx === arcs.length - 1;
+      const isLast = sIdx === seasons.length - 1 && isLastInSeason;
+      const rowCls = (isLast ? "row row-last" : "row") + (showStation ? "" : " is-substop");
+      const pill = isHi ? `<span class="role-badge" style="background: ${role}">${escapeHtml(pillLabel(status))}</span>` : "";
+      const synKey = arcKey;
+      const synBtn = arcHasReadMore(synKey)
+        ? `<button type="button" class="readmore-chip" data-synopsis-key="${escapeHtml(synKey)}" data-synopsis-title="${escapeHtml(title)}">${escapeHtml(tr.readMoreOpenBtn)}</button>`
+        : "";
+      const metaLine = `${escapeHtml(start)} → ${escapeHtml(end)} · ${escapeHtml(tr.epPrefix)} ${escapeHtml(eps)}`;
+      const metaBlock = synBtn
+        ? `<div class="station-foot"><span class="station-meta">${metaLine}</span>${synBtn}</div>`
+        : `<div class="station-meta station-meta--block">${metaLine}</div>`;
+      const range = arcEpRange(arc);
+      const arcNotesHtml =
+        range && ARC_EVENTS.some((e) => e.ep >= range[0] && e.ep <= range[1])
+          ? ARC_EVENTS.filter((e) => e.ep >= range[0] && e.ep <= range[1])
+              .sort((a, b) => a.ep - b.ep)
+              .map(
+                (e) =>
+                  `<div class="arc-event-note"><span class="arc-event-note-emoji" aria-hidden="true">${escapeHtml(arcEventEmoji(e))}</span>${escapeHtml(eventTitle(e))}<span class="arc-event-note-ep"> · ${escapeHtml(tr.epPrefix)} ${e.ep}</span></div>`
+              )
+              .join("")
+          : "";
+
+      html += `
+        <div class="${rowCls}" style="--bc: ${bc}">
+          <div class="marker-cell">
+            <span class="${markerCls}" style="${markerStyle}"></span>
+          </div>
+          <div class="station-info">
+            <span class="station-id">${num}</span>
+            <a class="station-name" href="${url}" target="_blank" rel="noopener">${escapeHtml(title)}</a>
+            ${pill}
+            ${metaBlock}
+            ${arcNotesHtml}
+          </div>
+        </div>`;
+
+      if (range) {
+        const inside = MILESTONES.filter((m) => m.ep >= range[0] && m.ep <= range[1]);
+        inside.forEach((m) => {
+          const label = tr["m_" + m.id] || m.id;
+          html += `
+            <div class="interchange" style="--bc: ${bc}; --mc: ${m.color}">
+              <div class="marker-cell">
+                <span class="interchange-marker">${m.symbol}</span>
+              </div>
+              <div class="interchange-info">
+                <div class="interchange-eyebrow">${escapeHtml(tr.milestone)}</div>
+                <div class="interchange-title">${escapeHtml(label)}</div>
+                <div class="interchange-meta">${escapeHtml(m.date)} · ${escapeHtml(tr.epPrefix)} ${m.ep}</div>
+              </div>
+            </div>`;
+        });
+      }
+    });
+  });
+  document.getElementById("map").innerHTML = html;
+}
+
+function renderAll() {
+  renderHeader();
+  renderFloatingLegend();
+  renderMap();
+}
+
+const LEGEND_KEY = "dna-arcs-metro-legend-collapsed";
+const legendPanel = document.getElementById("legend-panel");
+const legendToggle = document.getElementById("legend-toggle");
+let legendCollapsed = false;
+try { legendCollapsed = localStorage.getItem(LEGEND_KEY) === "1"; } catch (_) {}
+if (legendCollapsed) legendPanel.classList.add("is-collapsed");
+legendToggle.addEventListener("click", () => {
+  legendPanel.classList.toggle("is-collapsed");
+  const collapsed = legendPanel.classList.contains("is-collapsed");
+  try { localStorage.setItem(LEGEND_KEY, collapsed ? "1" : "0"); } catch (_) {}
+  updateToggleLabel();
+});
+
+const langSelect = document.getElementById("lang");
+langSelect.value = currentLang;
+langSelect.addEventListener("change", (e) => {
+  currentLang = e.target.value;
+  try { localStorage.setItem(STORAGE_KEY, currentLang); } catch (_) {}
+  closeSynopsisModal();
+  renderAll();
+});
+
+document.getElementById("map").addEventListener("click", (e) => {
+  const btn = e.target.closest(".readmore-chip");
+  if (!btn || !document.getElementById("map").contains(btn)) return;
+  e.preventDefault();
+  const key = btn.getAttribute("data-synopsis-key");
+  const arcTitle = btn.getAttribute("data-synopsis-title") || "";
+  if (key) openSynopsisModal(key, arcTitle);
+});
+
+document.getElementById("synopsis-close").addEventListener("click", closeSynopsisModal);
+document.getElementById("synopsis-backdrop").addEventListener("click", closeSynopsisModal);
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  const modal = document.getElementById("synopsis-modal");
+  if (!modal.hidden) closeSynopsisModal();
+});
+
+renderAll();
+</script>
+</body>
+</html>
