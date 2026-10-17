@@ -246,13 +246,6 @@
     line-height: 1.2;
     flex-shrink: 0;
   }
-  .readmore-chip::after {
-    content: "›";
-    font-size: 12px;
-    font-weight: 800;
-    opacity: 0.55;
-    transform: translateY(-0.5px);
-  }
   .readmore-chip:hover {
     border-color: var(--both);
     color: var(--both);
@@ -3440,9 +3433,9 @@ function renderAppearancesHtml(key) {
     const on = !!sara;
     const kissCount = on ? kissCountForEp(ep) : 0;
     const kissNote = kissCount > 0
-      ? " · " + tr.appearancesLegendKiss + (kissCount > 1 ? " (\u00d7" + kissCount + ")" : "")
+      ? ", " + tr.appearancesLegendKiss + (kissCount > 1 ? " (\u00d7" + kissCount + ")" : "")
       : "";
-    const title = `${ep} · ${tr.appearancesRowSara} · ${on ? tr.appearancesLegendOnSara : tr.appearancesLegendOff}${kissNote}`;
+    const title = `${ep}, ${tr.appearancesRowSara}, ${on ? tr.appearancesLegendOnSara : tr.appearancesLegendOff}${kissNote}`;
     const kissHtml = kissCount > 0 ? appearKissInnerHtml(ep) : "";
     html += `<span class="appear-cell ${on ? "appear-cell--on appear-cell--sara" : "appear-cell--off"}" role="img" aria-label="${escapeHtml(title)}">${kissHtml}</span>`;
   });
@@ -3451,9 +3444,9 @@ function renderAppearancesHtml(key) {
     const on = !!roxane;
     const kissCount = on ? kissCountForEp(ep) : 0;
     const kissNote = kissCount > 0
-      ? " · " + tr.appearancesLegendKiss + (kissCount > 1 ? " (\u00d7" + kissCount + ")" : "")
+      ? ", " + tr.appearancesLegendKiss + (kissCount > 1 ? " (\u00d7" + kissCount + ")" : "")
       : "";
-    const title = `${ep} · ${tr.appearancesRowRoxane} · ${on ? tr.appearancesLegendOnRoxane : tr.appearancesLegendOff}${kissNote}`;
+    const title = `${ep}, ${tr.appearancesRowRoxane}, ${on ? tr.appearancesLegendOnRoxane : tr.appearancesLegendOff}${kissNote}`;
     const kissHtml = kissCount > 0 ? appearKissInnerHtml(ep) : "";
     html += `<span class="appear-cell ${on ? "appear-cell--on appear-cell--roxane" : "appear-cell--off"}" role="img" aria-label="${escapeHtml(title)}">${kissHtml}</span>`;
   });
@@ -3558,7 +3551,7 @@ function renderFloatingLegend() {
               <span class="legend-marker-cell"><span class="legend-icon" style="--mi: ${m.color}">${m.symbol}</span></span>
               <span>
                 <span style="color: var(--ink)">${escapeHtml(label)}</span>
-                <span class="legend-meta">${escapeHtml(m.date)} · ${escapeHtml(tr.epPrefix)} ${m.ep}</span>
+                <span class="legend-meta">${escapeHtml(m.date)}, ${escapeHtml(tr.epPrefix)} ${m.ep}</span>
               </span>
             </div>`;
         }).join("")}
@@ -3576,7 +3569,7 @@ function renderFloatingLegend() {
               <span class="legend-marker-cell"><span class="legend-line-badge"><span>${s}</span></span></span>
               <span>
                 <span style="color: var(--ink)">${escapeHtml(tr.season)} ${s}</span>
-                <span class="legend-meta">${escapeHtml(arcs[0][4])} → ${escapeHtml(arcs[arcs.length - 1][5])}</span>
+                <span class="legend-meta">${escapeHtml(arcs[0][4])} – ${escapeHtml(arcs[arcs.length - 1][5])}</span>
               </span>
             </div>`;
         }).join("")}
@@ -3614,7 +3607,7 @@ function renderMap() {
         <div class="banner-info">
           <div class="banner-eyebrow">${escapeHtml(tr.terminus)}</div>
           <div class="banner-title">${escapeHtml(tr.season)} ${s}</div>
-          <div class="banner-meta">${escapeHtml(startDate)} → ${escapeHtml(endDate)}</div>
+          <div class="banner-meta">${escapeHtml(startDate)} – ${escapeHtml(endDate)}</div>
         </div>
       </div>`;
 
@@ -3635,7 +3628,7 @@ function renderMap() {
       const synBtn = arcHasReadMore(synKey)
         ? `<button type="button" class="readmore-chip" data-synopsis-key="${escapeHtml(synKey)}" data-synopsis-title="${escapeHtml(title)}">${escapeHtml(tr.readMoreOpenBtn)}</button>`
         : "";
-      const metaLine = `${escapeHtml(start)} → ${escapeHtml(end)} · ${escapeHtml(tr.epPrefix)} ${escapeHtml(eps)}`;
+      const metaLine = `${escapeHtml(start)} – ${escapeHtml(end)}, ${escapeHtml(tr.epPrefix)} ${escapeHtml(eps)}`;
       const metaBlock = synBtn
         ? `<div class="station-foot"><span class="station-meta">${metaLine}</span>${synBtn}</div>`
         : `<div class="station-meta station-meta--block">${metaLine}</div>`;
@@ -3646,7 +3639,7 @@ function renderMap() {
               .sort((a, b) => a.ep - b.ep)
               .map(
                 (e) =>
-                  `<div class="arc-event-note"><span class="arc-event-note-emoji" aria-hidden="true">${escapeHtml(arcEventEmoji(e))}</span>${escapeHtml(eventTitle(e))}<span class="arc-event-note-ep"> · ${escapeHtml(tr.epPrefix)} ${e.ep}</span></div>`
+                  `<div class="arc-event-note"><span class="arc-event-note-emoji" aria-hidden="true">${escapeHtml(arcEventEmoji(e))}</span>${escapeHtml(eventTitle(e))}<span class="arc-event-note-ep"> (${escapeHtml(tr.epPrefix)} ${e.ep})</span></div>`
               )
               .join("")
           : "";
@@ -3677,7 +3670,7 @@ function renderMap() {
               <div class="interchange-info">
                 <div class="interchange-eyebrow">${escapeHtml(tr.milestone)}</div>
                 <div class="interchange-title">${escapeHtml(label)}</div>
-                <div class="interchange-meta">${escapeHtml(m.date)} · ${escapeHtml(tr.epPrefix)} ${m.ep}</div>
+                <div class="interchange-meta">${escapeHtml(m.date)}, ${escapeHtml(tr.epPrefix)} ${m.ep}</div>
               </div>
             </div>`;
         });
