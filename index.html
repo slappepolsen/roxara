@@ -115,6 +115,7 @@
   .container { max-width: 1100px; margin: 0 auto; padding: 28px 24px 80px; padding-right: 340px; }
   @media (max-width: 980px) {
     .container { padding-right: 24px; }
+    .stills-rail { display: none; }
   }
 
   .panel-title {
@@ -126,14 +127,59 @@
     margin: 0 0 12px;
   }
 
+  .map-layout {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 4px;
+  }
   .map {
     position: relative;
-    margin-top: 4px;
+    flex: 1;
+    min-width: 0;
     background: var(--bg-soft);
     border: 1px solid var(--rule);
     border-radius: 8px;
     padding: 0;
     overflow: hidden;
+  }
+  .stills-rail {
+    width: 128px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .stills-rail-track {
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+  }
+  .stills-rail-item {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0;
+    width: 100%;
+  }
+  .stills-rail-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    box-shadow: 0 2px 8px rgba(44, 40, 36, 0.08);
+  }
+  .stills-rail-item figcaption {
+    margin-top: 4px;
+  }
+  .stills-cap-line {
+    display: block;
+    font-size: 8px;
+    line-height: 1.25;
+    color: var(--ink-mute);
+    letter-spacing: 0.01em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .row {
@@ -866,6 +912,8 @@
   @media (max-width: 700px) {
     :root { --spine-x: 64px; }
     .row, .interchange, .season-banner { grid-template-columns: 64px 1fr; }
+    .map-layout { flex-direction: column; }
+    .stills-rail { display: none; }
     .station-info, .interchange-info, .banner-info { padding-left: 28px; }
     .topbar { padding: 12px 16px; flex-wrap: wrap; row-gap: 8px; }
     .topbar-credit { font-size: 11px; order: 3; width: 100%; text-align: right; padding-right: 0; }
@@ -899,7 +947,12 @@
 
   <div class="container">
     <h2 class="panel-title" id="map-title"></h2>
-    <div class="map" id="map"></div>
+    <div class="map-layout">
+      <div class="map" id="map"></div>
+      <aside class="stills-rail" id="stills-rail" hidden>
+        <div class="stills-rail-track" id="stills-rail-track"></div>
+      </aside>
+    </div>
 
     <footer id="footer"></footer>
   </div>
@@ -1063,6 +1116,120 @@ const SEASON_COLORS = {
 };
 const ROLE_COLORS = { 1: "var(--roxane)", 2: "var(--sara)", 3: "var(--both)" };
 /** Arc status (ARCS last column): 0 substop · 1 roxane · 2 sara · 3 both · 4 featured (no role badge) */
+
+/** One still per arc key — narrow rail beside the map; 2-line captions only (see existing entries). */
+const ARC_STILLS = {
+  "3-32": {
+    ep: 632,
+    src: "stills/632.jpg",
+    caption: {
+      fr: "Demain nous appartient ep 632\nCapture ecran TF1",
+      en: "Demain nous appartient ep 632\nCapture ecran TF1",
+      es: "Demain nous appartient ep 632\nCapture ecran TF1",
+      pt: "Demain nous appartient ep 632\nCapture ecran TF1",
+      de: "Demain nous appartient ep 632\nCapture ecran TF1"
+    }
+  },
+  "3-33": {
+    ep: 663,
+    src: "stills/663.jpg",
+    caption: {
+      fr: "Demain nous appartient ep 663\nCapture ecran TF1",
+      en: "Demain nous appartient ep 663\nCapture ecran TF1",
+      es: "Demain nous appartient ep 663\nCapture ecran TF1",
+      pt: "Demain nous appartient ep 663\nCapture ecran TF1",
+      de: "Demain nous appartient ep 663\nCapture ecran TF1"
+    }
+  },
+  "5-54": {
+    ep: 1043,
+    src: "stills/1043.jpg",
+    caption: {
+      fr: "Demain nous appartient ep 1043\nCapture ecran TF1",
+      en: "Demain nous appartient ep 1043\nCapture ecran TF1",
+      es: "Demain nous appartient ep 1043\nCapture ecran TF1",
+      pt: "Demain nous appartient ep 1043\nCapture ecran TF1",
+      de: "Demain nous appartient ep 1043\nCapture ecran TF1"
+    }
+  },
+  "5-57": {
+    ep: 1091,
+    src: "stills/1091.jpg",
+    caption: {
+      fr: "Demain nous appartient ep 1091\nCapture ecran TF1",
+      en: "Demain nous appartient ep 1091\nCapture ecran TF1",
+      es: "Demain nous appartient ep 1091\nCapture ecran TF1",
+      pt: "Demain nous appartient ep 1091\nCapture ecran TF1",
+      de: "Demain nous appartient ep 1091\nCapture ecran TF1"
+    }
+  },
+  "6-75": {
+    ep: 1370,
+    src: "stills/1370.jpg",
+    caption: {
+      fr: "Demain nous appartient ep 1370\nCapture ecran TF1",
+      en: "Demain nous appartient ep 1370\nCapture ecran TF1",
+      es: "Demain nous appartient ep 1370\nCapture ecran TF1",
+      pt: "Demain nous appartient ep 1370\nCapture ecran TF1",
+      de: "Demain nous appartient ep 1370\nCapture ecran TF1"
+    }
+  },
+  "7-95": {
+    ep: 1648,
+    src: "stills/1648.jpg",
+    caption: {
+      fr: "Demain nous appartient ep 1648\nCapture ecran TF1",
+      en: "Demain nous appartient ep 1648\nCapture ecran TF1",
+      es: "Demain nous appartient ep 1648\nCapture ecran TF1",
+      pt: "Demain nous appartient ep 1648\nCapture ecran TF1",
+      de: "Demain nous appartient ep 1648\nCapture ecran TF1"
+    }
+  },
+  "4-47": {
+    ep: 920,
+    src: "stills/920.jpg",
+    caption: {
+      fr: "Demain nous appartient ep 920\nCapture ecran TF1",
+      en: "Demain nous appartient ep 920\nCapture ecran TF1",
+      es: "Demain nous appartient ep 920\nCapture ecran TF1",
+      pt: "Demain nous appartient ep 920\nCapture ecran TF1",
+      de: "Demain nous appartient ep 920\nCapture ecran TF1"
+    }
+  },
+  "5-62": {
+    ep: 1168,
+    src: "stills/1168.jpg",
+    caption: {
+      fr: "Demain nous appartient ep 1168\nCapture ecran TF1",
+      en: "Demain nous appartient ep 1168\nCapture ecran TF1",
+      es: "Demain nous appartient ep 1168\nCapture ecran TF1",
+      pt: "Demain nous appartient ep 1168\nCapture ecran TF1",
+      de: "Demain nous appartient ep 1168\nCapture ecran TF1"
+    }
+  },
+  "6-82": {
+    ep: 1470,
+    src: "stills/1470.jpg",
+    caption: {
+      fr: "Demain nous appartient ep 1470\nCapture ecran TF1",
+      en: "Demain nous appartient ep 1470\nCapture ecran TF1",
+      es: "Demain nous appartient ep 1470\nCapture ecran TF1",
+      pt: "Demain nous appartient ep 1470\nCapture ecran TF1",
+      de: "Demain nous appartient ep 1470\nCapture ecran TF1"
+    }
+  },
+  "6-83": {
+    ep: 1490,
+    src: "stills/1490.jpg",
+    caption: {
+      fr: "Demain nous appartient ep 1490\nCapture ecran TF1",
+      en: "Demain nous appartient ep 1490\nCapture ecran TF1",
+      es: "Demain nous appartient ep 1490\nCapture ecran TF1",
+      pt: "Demain nous appartient ep 1490\nCapture ecran TF1",
+      de: "Demain nous appartient ep 1490\nCapture ecran TF1"
+    }
+  }
+};
 
 const MILESTONES = [
   { id: "firstMeeting", ep: 632,  date: "06/01/2020", color: "#f07db0", symbol: "\u274B" },
@@ -3211,7 +3378,8 @@ const TRANSLATIONS = {
     appearancesLegendOnSara: "Sara on screen",
     appearancesLegendOnRoxane: "Roxane on screen",
     appearancesLegendOff: "Not on screen",
-    appearancesLegendKiss: "Kiss"
+    appearancesLegendKiss: "Kiss",
+    stillsRailLabel: "Still"
   },
   fr: {
     title: "La ligne Roxara",
@@ -3249,7 +3417,8 @@ const TRANSLATIONS = {
     appearancesLegendOnSara: "Sara à l’écran",
     appearancesLegendOnRoxane: "Roxane à l’écran",
     appearancesLegendOff: "Pas à l’écran",
-    appearancesLegendKiss: "Baiser"
+    appearancesLegendKiss: "Baiser",
+    stillsRailLabel: "Capture"
   },
   es: {
     title: "La línea Roxara",
@@ -3287,7 +3456,8 @@ const TRANSLATIONS = {
     appearancesLegendOnSara: "Sara en pantalla",
     appearancesLegendOnRoxane: "Roxane en pantalla",
     appearancesLegendOff: "No aparece",
-    appearancesLegendKiss: "Beso"
+    appearancesLegendKiss: "Beso",
+    stillsRailLabel: "Captura"
   },
   pt: {
     title: "A linha Roxara",
@@ -3325,7 +3495,8 @@ const TRANSLATIONS = {
     appearancesLegendOnSara: "Sara em cena",
     appearancesLegendOnRoxane: "Roxane em cena",
     appearancesLegendOff: "Não aparece",
-    appearancesLegendKiss: "Beijo"
+    appearancesLegendKiss: "Beijo",
+    stillsRailLabel: "Captura"
   },
   de: {
     title: "Die Roxara-Linie",
@@ -3363,7 +3534,8 @@ const TRANSLATIONS = {
     appearancesLegendOnSara: "Sara zu sehen",
     appearancesLegendOnRoxane: "Roxane zu sehen",
     appearancesLegendOff: "Nicht zu sehen",
-    appearancesLegendKiss: "Kuss"
+    appearancesLegendKiss: "Kuss",
+    stillsRailLabel: "Standbild"
   }
 };
 
@@ -3385,6 +3557,91 @@ function arcEpRange(arc) {
   const start = parseInt(m[1], 10);
   const end = m[2] ? parseInt(m[2], 10) : start;
   return [start, end];
+}
+
+function arcStillCaption(entry) {
+  const c = entry.caption;
+  if (typeof c === "string") return c;
+  if (c && typeof c === "object") return c[currentLang] || c.fr || c.en || "";
+  return "";
+}
+
+/** Two fixed lines for the narrow rail (Safari breaks -webkit-line-clamp + pre-line). */
+function stillRailCaptionParts(entry) {
+  const ep = entry.ep;
+  const alt = arcStillCaption(entry) || `Demain nous appartient ep ${ep} Capture ecran TF1`;
+  return {
+    line1: `Demain nous appartient ep ${ep}`,
+    line2: "Capture ecran TF1",
+    alt
+  };
+}
+
+function stillRailFigcaptionHtml(entry) {
+  const { line1, line2 } = stillRailCaptionParts(entry);
+  return `<figcaption><span class="stills-cap-line">${escapeHtml(line1)}</span><span class="stills-cap-line">${escapeHtml(line2)}</span></figcaption>`;
+}
+
+let stillsRailLayoutBound = false;
+
+function layoutStillsRailPositions() {
+  const map = document.getElementById("map");
+  const track = document.getElementById("stills-rail-track");
+  if (!map || !track) return;
+  track.style.minHeight = map.offsetHeight + "px";
+  track.querySelectorAll(".stills-rail-item").forEach((item) => {
+    const key = item.getAttribute("data-arc-key");
+    if (!key) return;
+    const row = map.querySelector(`.row[data-arc-key="${key}"]`);
+    if (!row) return;
+    const top = row.offsetTop + Math.max(0, (row.offsetHeight - item.offsetHeight) / 2);
+    item.style.top = top + "px";
+  });
+}
+
+function scheduleStillsRailLayout() {
+  requestAnimationFrame(() => {
+    layoutStillsRailPositions();
+    requestAnimationFrame(layoutStillsRailPositions);
+  });
+}
+
+function wireStillsRail() {
+  const rail = document.getElementById("stills-rail");
+  const track = document.getElementById("stills-rail-track");
+  if (!rail || !track) return;
+  const tr = t();
+  rail.setAttribute("aria-label", tr.stillsRailLabel || "Still");
+
+  const keys = Object.keys(ARC_STILLS).filter((k) => ARC_STILLS[k] && ARC_STILLS[k].src);
+  if (!keys.length) {
+    rail.hidden = true;
+    track.innerHTML = "";
+    return;
+  }
+  rail.hidden = false;
+  track.innerHTML = keys
+    .map((k) => {
+      const entry = ARC_STILLS[k];
+      const { alt } = stillRailCaptionParts(entry);
+      return `<figure class="stills-rail-item" data-arc-key="${escapeHtml(k)}">
+        <img src="${escapeHtml(entry.src)}" alt="${escapeHtml(alt)}" decoding="async" />
+        ${stillRailFigcaptionHtml(entry)}
+      </figure>`;
+    })
+    .join("");
+
+  scheduleStillsRailLayout();
+  track.querySelectorAll("img").forEach((img) => {
+    if (img.complete) return;
+    img.addEventListener("load", scheduleStillsRailLayout, { once: true });
+    img.addEventListener("error", scheduleStillsRailLayout, { once: true });
+  });
+
+  if (!stillsRailLayoutBound) {
+    stillsRailLayoutBound = true;
+    window.addEventListener("resize", scheduleStillsRailLayout);
+  }
 }
 
 /** Appearance matrix in Read more: show whenever we have per-episode appearance rows for this arc key. */
@@ -3645,7 +3902,7 @@ function renderMap() {
           : "";
 
       html += `
-        <div class="${rowCls}" style="--bc: ${bc}">
+        <div class="${rowCls}" style="--bc: ${bc}" data-arc-key="${escapeHtml(arcKey)}">
           <div class="marker-cell">
             <span class="${markerCls}" style="${markerStyle}"></span>
           </div>
@@ -3684,6 +3941,7 @@ function renderAll() {
   renderHeader();
   renderFloatingLegend();
   renderMap();
+  wireStillsRail();
 }
 
 const LEGEND_KEY = "dna-arcs-metro-legend-collapsed";
